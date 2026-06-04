@@ -71,13 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const barNaoh = document.querySelector('.portion-naoh');
 
   // Spheroid Form Elements
+  const inputSphHemoCells = document.getElementById('sph-hemo-cells');
   const inputSphCurrentVol = document.getElementById('sph-current-vol');
-  const inputSphCellsBase = document.getElementById('sph-cells-base');
-  const inputSphCellsExponent = document.getElementById('sph-cells-exponent');
+  const inputSphPlateWells = document.getElementById('sph-plate-wells');
   const inputSphMicrowells = document.getElementById('sph-microwells');
   const inputSphCellsPerMicro = document.getElementById('sph-cells-per-micro');
   const inputSphFinalVol = document.getElementById('sph-final-vol');
-  const sphStockDensityDisplay = document.getElementById('sph-stock-density-display');
+  const sphResDensity = document.getElementById('sph-res-density');
+  const sphResTotalCells = document.getElementById('sph-res-total-cells');
+  const sphRequiredInfoBox = document.getElementById('sph-required-info-box');
   
   // Spheroid Result Elements
   const sphResultCard = document.getElementById('sph-result-card');
@@ -469,38 +471,47 @@ document.addEventListener('DOMContentLoaded', () => {
   function calculateSpheroid() {
     if (!pageSpheroid) return;
 
-    // 1. Parse current stock information
+    // 1. Parse current stock information from Hemocytometer inputs
+    const cellsCount = parseFloat(inputSphHemoCells.value) || 0;
     const vCurrent = parseFloat(inputSphCurrentVol.value) || 0;
-    const cellsBase = parseFloat(inputSphCellsBase.value) || 0;
-    const cellsExp = parseInt(inputSphCellsExponent.value) || 0;
-    const nTotal = cellsBase * Math.pow(10, cellsExp);
 
-    // Stock concentration: C_current = N_total / V_current
-    let cCurrent = 0;
-    if (vCurrent > 0 && nTotal > 0) {
-      cCurrent = nTotal / vCurrent;
-    }
+    // Stock concentration: C_current = cellsCount * 20000 cells/mL
+    const cCurrent = cellsCount * 20000;
+    const nTotal = cCurrent * vCurrent;
 
-    // Display stock concentration
-    sphStockDensityDisplay.innerHTML = formatScientificHTML(cCurrent);
+    // Display stock density and total cells
+    sphResDensity.innerHTML = formatScientificHTML(cCurrent, "cells/mL");
+    sphResTotalCells.innerHTML = formatScientificHTML(nTotal, "cells");
 
     // 2. Parse target setup information
+    const plateWells = parseInt(inputSphPlateWells.value) || 0;
     const mWell = parseInt(inputSphMicrowells.value) || 0;
     const nMicro = parseInt(inputSphCellsPerMicro.value) || 0;
     const vFinalPrep = parseFloat(inputSphFinalVol.value) || 0; // mL
 
     // Mathematical targets
-    // Target concentration is: M_well * N_micro cells per mL
     const cTarget = mWell * nMicro;
     const nWell = mWell * nMicro;
+    const nPlate = nWell * plateWells;
     const nRequired = cTarget * vFinalPrep;
+
+    // Display dynamic required cells information summary
+    if (sphRequiredInfoBox) {
+      const nWellKorean = (nWell / 10000).toFixed(1).replace(".0", "") + "만";
+      const nPlateKorean = (nPlate / 10000).toFixed(1).replace(".0", "") + "만";
+      
+      sphRequiredInfoBox.innerHTML = `
+        👉 <strong>1 well당 필요 세포 수</strong>: ${nWell.toLocaleString()} cells (${formatScientificHTML(nWell, "cells")}, 총 ${nWellKorean} 개)<br>
+        👉 <strong>1 plate 전체 (${plateWells} well) 필요 세포 수</strong>: ${nPlate.toLocaleString()} cells (${formatScientificHTML(nPlate, "cells")}, 총 ${nPlateKorean} 개)
+      `;
+    }
 
     // 3. Boundary & constraint checking
     let hasError = false;
     let errTitleText = "";
     let errDescText = "";
 
-    if (vCurrent <= 0 || nTotal <= 0 || mWell <= 0 || nMicro <= 0 || vFinalPrep <= 0) {
+    if (vCurrent <= 0 || nTotal <= 0 || mWell <= 0 || nMicro <= 0 || vFinalPrep <= 0 || plateWells <= 0) {
       hasError = true;
       errTitleText = "입력값 오류";
       errDescText = "모든 입력값은 0보다 큰 숫자여야 계산할 수 있습니다.";
@@ -555,7 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Register spheroid inputs change triggers
   const sphInputIds = [
-    'sph-current-vol', 'sph-cells-base', 'sph-cells-exponent',
+    'sph-hemo-cells', 'sph-current-vol', 'sph-plate-wells',
     'sph-microwells', 'sph-cells-per-micro', 'sph-final-vol'
   ];
   sphInputIds.forEach(id => {
@@ -568,15 +579,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Spheroid reset button trigger
   if (btnResetFormSph) {
     btnResetFormSph.addEventListener('click', () => {
+      inputSphHemoCells.value = "100";
       inputSphCurrentVol.value = "5.0";
-      inputSphCellsBase.value = "1.0";
-      inputSphCellsExponent.value = "7";
+      inputSphPlateWells.value = "24";
       inputSphMicrowells.value = "1200";
       inputSphCellsPerMicro.value = "200";
       inputSphFinalVol.value = "10.0";
 
       calculateSpheroid();
-      inputSphCurrentVol.focus();
+      inputSphHemoCells.focus();
     });
   }
 

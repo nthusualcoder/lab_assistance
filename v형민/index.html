@@ -406,29 +406,36 @@
         <!-- Card 1. Current Cell Suspension State -->
         <div class="card-toss">
           <label class="card-label">현재 세포 현탁액 정보 (Current Stock)</label>
+          <p class="card-sub-desc">Hemocytometer로 16칸 전체 측정 후 세포 수와 부피를 입력하세요.</p>
           
-          <div class="input-field-container">
-            <span class="input-field-label">현재 세포 현탁액 부피 ($V_{current}$)</span>
-            <div class="floating-input-group static-label-input">
-              <input type="number" id="sph-current-vol" value="5.0" step="0.1" min="0.001" placeholder=" ">
-              <span class="input-suffix">mL</span>
-            </div>
-          </div>
-
-          <div class="input-row-scientific">
+          <div class="input-row">
             <div class="input-field-container">
-              <span class="input-field-label">현재 총 세포 수 ($N_{total}$)</span>
-              <div class="scientific-input-row">
-                <input type="number" id="sph-cells-base" value="1.0" step="0.01" min="0" placeholder="1.0" class="sc-input-base">
-                <span class="sc-multiply">&times;</span>
-                <span class="sc-base">10<span class="sc-power-wrapper"><input type="number" id="sph-cells-exponent" value="7" step="1" min="0" placeholder="7" class="sc-input-power"></span></span>
-                <span class="sc-unit">cells</span>
+              <span class="input-field-label">총 카운팅 세포 수</span>
+              <div class="floating-input-group static-label-input">
+                <input type="number" id="sph-hemo-cells" value="100" min="0" placeholder=" ">
+                <span class="input-suffix">cells</span>
+              </div>
+            </div>
+            <div class="input-field-container">
+              <span class="input-field-label">세포액 총 부피 ($V_{current}$)</span>
+              <div class="floating-input-group static-label-input">
+                <input type="number" id="sph-current-vol" value="5.0" step="0.1" min="0.001" placeholder=" ">
+                <span class="input-suffix">mL</span>
               </div>
             </div>
           </div>
           
-          <div class="stock-calc-hint">
-            💡 계산된 원액 농도: <strong id="sph-stock-density-display">2.00 &times; 10<sup>6</sup></strong> cells/mL
+          <hr class="divider">
+          
+          <div class="result-list">
+            <div class="result-row">
+              <span class="result-name">계산된 원액 농도 (Stock Density)</span>
+              <span class="result-value text-blue" id="sph-res-density">2.00 &times; 10<sup>6</sup> cells/mL</span>
+            </div>
+            <div class="result-row">
+              <span class="result-name">원액 전체 세포 수 (Total Cells)</span>
+              <span class="result-value" id="sph-res-total-cells">1.00 &times; 10<sup>7</sup> cells</span>
+            </div>
           </div>
         </div>
 
@@ -436,20 +443,27 @@
         <div class="card-toss">
           <label class="card-label">목표 스페로이드 제조 설정</label>
 
-          <div class="input-row">
-            <div class="input-field-container">
-              <span class="input-field-label">Well당 Microwell 수 ($M_{well}$)</span>
-              <div class="floating-input-group static-label-input">
-                <input type="number" id="sph-microwells" value="1200" min="1" step="1" placeholder=" ">
-                <span class="input-suffix">개</span>
-              </div>
+          <div class="input-field-container">
+            <span class="input-field-label">Plate당 Well 수</span>
+            <div class="floating-input-group static-label-input">
+              <input type="number" id="sph-plate-wells" value="24" min="1" step="1" placeholder=" ">
+              <span class="input-suffix">well</span>
             </div>
-            <div class="input-field-container">
-              <span class="input-field-label">Microwell당 세포 수 ($N_{micro}$)</span>
-              <div class="floating-input-group static-label-input">
-                <input type="number" id="sph-cells-per-micro" value="200" min="1" step="1" placeholder=" ">
-                <span class="input-suffix">cells</span>
-              </div>
+          </div>
+
+          <div class="input-field-container">
+            <span class="input-field-label">Well당 Microwell 수 ($M_{well}$)</span>
+            <div class="floating-input-group static-label-input">
+              <input type="number" id="sph-microwells" value="1200" min="1" step="1" placeholder=" ">
+              <span class="input-suffix">개</span>
+            </div>
+          </div>
+
+          <div class="input-field-container">
+            <span class="input-field-label">Microwell당 세포 수 ($N_{micro}$)</span>
+            <div class="floating-input-group static-label-input">
+              <input type="number" id="sph-cells-per-micro" value="200" min="1" step="1" placeholder=" ">
+              <span class="input-suffix">cells</span>
             </div>
           </div>
 
@@ -459,6 +473,10 @@
               <input type="number" id="sph-final-vol" value="10.0" step="0.1" min="0.001" placeholder=" ">
               <span class="input-suffix">mL</span>
             </div>
+          </div>
+
+          <div class="spheroid-calc-info-box" id="sph-required-info-box">
+            <!-- Dynamically populated sentence: e.g. "따라서 1 well당 2.40 × 10⁵ cells가 필요하며..." -->
           </div>
         </div>
 

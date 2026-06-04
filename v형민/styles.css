@@ -1088,3 +1088,15 @@ body {
   font-family: 'Inter', monospace;
   color: var(--text-main);
 }
+
+.spheroid-calc-info-box {
+  background-color: var(--bg-preset);
+  border-radius: 16px;
+  padding: 14px 18px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--text-sub);
+  border-left: 4px solid var(--color-primary);
+  margin-top: 8px;
+}
+
