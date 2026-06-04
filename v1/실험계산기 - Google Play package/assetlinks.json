@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.nthusualcoder.twa",
+        "sha256_cert_fingerprints": ["A2:52:68:98:CE:81:26:C9:4C:8C:AB:65:7D:2F:3A:1E:E7:0A:A1:6D:34:FF:54:58:F5:3F:53:8B:73:56:EB:37"]
+      }
+    }]
