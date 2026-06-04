@@ -1,0 +1,18 @@
+{
+  "name": "실험 보조 계산기",
+  "short_name": "실험계산기",
+  "description": "실험실에서 자주 사용하는 농도 및 시약 용량을 계산해주는 편리한 로컬 웹 앱",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f2f4f6",
+  "theme_color": "#3182f6",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

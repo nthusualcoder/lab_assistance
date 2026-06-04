@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f94ff" />
+      <stop offset="100%" stop-color="#1b64da" />
+    </linearGradient>
+  </defs>
+  <!-- Background Card -->
+  <rect width="512" height="512" rx="128" fill="url(#blueGrad)" />
+  
+  <!-- Beaker / Flask Graphic (White) -->
+  <path d="M190 120h132v40l-70 110v100c0 11 9 20 20 20h-84c11 0 20-9 20-20V270l-70-110v-40z" fill="none" stroke="#ffffff" stroke-width="24" stroke-linejoin="round" stroke-linecap="round" />
+  
+  <!-- Measurement Lines on Beaker -->
+  <line x1="220" y1="310" x2="250" y2="310" stroke="#ffffff" stroke-width="16" stroke-linecap="round" />
+  <line x1="220" y1="270" x2="240" y2="270" stroke="#ffffff" stroke-width="16" stroke-linecap="round" />
+  
+  <!-- Calculator Plus/Minus Symbol inside Beaker / Floating -->
+  <path d="M320 260h60M350 230v60M320 350h60" stroke="#ffffff" stroke-width="20" stroke-linecap="round" />
+  
+  <!-- Bubbles/Dots for Chemistry theme -->
+  <circle cx="210" cy="210" r="12" fill="#ffffff" opacity="0.8" />
+  <circle cx="290" cy="230" r="8" fill="#ffffff" opacity="0.6" />
+</svg>
