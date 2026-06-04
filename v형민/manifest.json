@@ -1,0 +1,30 @@
+{
+  "name": "실험계산기-형민",
+  "short_name": "실험계산기-형민",
+  "description": "형민 전용 실험 보조 계산기 - 콜라겐, 세포 카운팅, Microwell Spheroid 계산 탑재",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1722",
+  "theme_color": "#ffa000",
+  "icons": [
+    {
+      "src": "./icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

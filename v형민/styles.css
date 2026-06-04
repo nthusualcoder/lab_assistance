@@ -1,0 +1,1090 @@
+/* ==========================================================================
+   Toss Design System (TDS) Inspired Stylesheet (v형민 Version)
+   ========================================================================== */
+
+/* 1. Theme Variables & Reset */
+:root {
+  /* Light Theme */
+  --bg-app: #f2f4f6;
+  --bg-card: #ffffff;
+  --bg-preset: #f2f4f6;
+  --bg-preset-active: #fff3e0; /* Light Orange/Yellow active state for HM */
+  --color-primary: #ffa000;      /* Orange theme primary for HM */
+  --color-primary-hover: #f57c00;
+  --color-secondary: #00d084;
+  --text-main: #191f28;
+  --text-sub: #4e5968;
+  --text-muted: #8b95a1;
+  --border-color: #e5e8eb;
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+  --shadow-input: 0 0 0 3px rgba(255, 160, 0, 0.15);
+  
+  /* Warnings */
+  --bg-warning: #fff0f0;
+  --border-warning: #fdd8d8;
+  --text-warning: #f04438;
+  
+  /* Portions Colors */
+  --color-col: #3182f6; /* Blue for Collagen */
+  --color-pbs: #10b981; /* Green for PBS */
+  --color-sfm: #ff6584; /* Soft vibrant pink for SFM */
+  --color-naoh: #f59e0b; /* Yellow-orange for NaOH */
+  
+  /* Spheroid specific theme colors */
+  --color-sph-cell: #ffa000;  /* Orange for Spheroid Cell stock */
+  --color-sph-media: #ff6584; /* Pink for fresh media */
+  
+  /* Font Family */
+  --font-sans: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  
+  /* Transition durations */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-theme {
+  /* Dark Theme (Default) */
+  --bg-app: #0f1722;
+  --bg-card: #182230;
+  --bg-preset: #222f41;
+  --bg-preset-active: rgba(255, 160, 0, 0.2);
+  --color-primary: #ffa000;
+  --color-primary-hover: #ffb300;
+  --text-main: #f9fafb;
+  --text-sub: #d1d6db;
+  --text-muted: #6b7684;
+  --border-color: #2c3a4e;
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.24);
+  --shadow-input: 0 0 0 3px rgba(255, 160, 0, 0.3);
+  
+  --bg-warning: rgba(240, 68, 56, 0.1);
+  --border-warning: rgba(240, 68, 56, 0.2);
+  --text-warning: #f25549;
+
+  --color-col: #3182f6;
+  --color-pbs: #34d399;
+  --color-sfm: #ff6584;
+  --color-naoh: #fbbf24;
+  
+  --color-sph-cell: #ffa000;
+  --color-sph-media: #ff6584;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transition: var(--transition-smooth);
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* 2. PWA Banner style */
+.install-banner {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 480px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+  transition: var(--transition-smooth);
+}
+
+.install-banner.hidden {
+  opacity: 0;
+  transform: translate(-50%, -20px);
+  pointer-events: none;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.banner-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.banner-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.banner-desc {
+  font-size: 0.75rem;
+  color: var(--text-sub);
+  margin-top: 2px;
+}
+
+.btn-install-sm {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-install-sm:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-close-sm {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+/* 3. Base App Layout */
+.app-container {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  background-color: var(--bg-app);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 60px rgba(0,0,0,0.02);
+  transition: var(--transition-smooth);
+}
+
+@media(min-width: 481px) {
+  .app-container {
+    min-height: 92vh;
+    margin: 4vh 0;
+    border-radius: 32px;
+    border: 6px solid var(--border-color);
+    overflow: hidden;
+    background-color: var(--bg-app);
+  }
+}
+
+/* Theme Toggle Button Floating */
+.theme-toggle {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  z-index: 100;
+  color: var(--text-main);
+  transition: var(--transition-fast);
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Version badge for v형민 app */
+.title-version-tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--bg-preset-active);
+  padding: 3px 8px;
+  border-radius: 8px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* 4. Page Management (SPA) */
+.app-page {
+  display: none;
+  flex-direction: column;
+  padding: 24px;
+  animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  min-height: 100%;
+  flex-grow: 1;
+}
+
+.app-page.active {
+  display: flex;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 5. Home Page Styles */
+.header-main {
+  margin-top: 40px;
+  margin-bottom: 32px;
+}
+
+.main-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+.main-subtitle {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--text-sub);
+  margin-top: 12px;
+  font-weight: 400;
+}
+
+.section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.menu-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: var(--bg-card);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.menu-card:hover {
+  transform: translateY(-2px);
+}
+
+.menu-card:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.menu-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menu-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+}
+
+.collagen-bg {
+  background: linear-gradient(135deg, #3182f6, #00d084);
+}
+
+.hemo-bg {
+  background: linear-gradient(135deg, #ff6584, #f59e0b);
+}
+
+.spheroid-bg {
+  background: linear-gradient(135deg, #ffa000, #ff3d00);
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.menu-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.menu-card-desc {
+  font-size: 0.8rem;
+  color: var(--text-sub);
+}
+
+.chevron-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+}
+
+.footer-info {
+  margin-top: auto;
+  text-align: center;
+  padding: 24px 0 12px;
+}
+
+.footer-info p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* 6. Navigation Header style for Calculator Pages */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  margin-bottom: 16px;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: var(--text-main);
+  transition: var(--transition-fast);
+}
+
+.btn-back:active {
+  background-color: var(--border-color);
+  transform: scale(0.9);
+}
+
+.back-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.nav-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 80px;
+}
+
+/* 7. Toss Style Cards & Presets */
+.card-toss {
+  background-color: var(--bg-card);
+  border-radius: 24px;
+  padding: 20px 24px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: var(--transition-smooth);
+}
+
+.card-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+}
+
+.preset-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.btn-preset {
+  background-color: var(--bg-preset);
+  border: 1.5px solid transparent;
+  border-radius: 16px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  color: var(--text-main);
+}
+
+.btn-preset:active {
+  transform: scale(0.95);
+}
+
+.btn-preset.active {
+  background-color: var(--bg-preset-active);
+  border-color: var(--color-primary);
+}
+
+.btn-preset.active .preset-name {
+  color: var(--color-primary);
+}
+
+.preset-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.preset-unit {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* 8. Static Input Labels */
+.input-field-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.input-field-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  padding-left: 4px;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-arrow-symbol {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding-top: 24px;
+}
+
+.floating-input-group {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.floating-input-group input {
+  width: 100%;
+  padding: 24px 44px 8px 16px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-app);
+  border-radius: 16px;
+  color: var(--text-main);
+  outline: none;
+  transition: var(--transition-fast);
+}
+
+.static-label-input input {
+  padding: 14px 44px 14px 16px;
+}
+
+.floating-input-group input[readonly] {
+  background-color: var(--bg-app);
+  opacity: 0.75;
+  border-color: transparent;
+  cursor: default;
+}
+
+.floating-input-group input:not([readonly]):focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-input);
+  background-color: var(--bg-card);
+}
+
+.floating-input-group label {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: var(--transition-fast);
+}
+
+.floating-input-group input:focus ~ label,
+.floating-input-group input:not(:placeholder-shown) ~ label {
+  top: 14px;
+  font-size: 0.72rem;
+  transform: translateY(0);
+}
+
+.input-suffix {
+  position: absolute;
+  right: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.status-msg-info {
+  font-size: 0.75rem;
+  color: var(--text-sub);
+  margin-top: -8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Large Volume Input style */
+.large-input input {
+  padding: 30px 48px 10px 20px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 20px;
+  text-align: left;
+}
+
+.large-input label {
+  left: 20px;
+  font-size: 1.05rem;
+}
+
+.large-input input:focus ~ label,
+.large-input input:not(:placeholder-shown) ~ label {
+  top: 14px;
+  font-size: 0.8rem;
+}
+
+.large-input .input-suffix {
+  right: 20px;
+  font-size: 1.15rem;
+}
+
+/* Segmented Control */
+.segmented-control {
+  position: relative;
+  display: flex;
+  background-color: var(--bg-preset);
+  border-radius: 14px;
+  padding: 3px;
+  width: 100%;
+}
+
+.segmented-control input[type="radio"] {
+  display: none;
+}
+
+.segmented-control label {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  cursor: pointer;
+  z-index: 2;
+  transition: var(--transition-fast);
+}
+
+.segmented-control input[type="radio"]:checked + label {
+  color: var(--color-primary);
+}
+
+.segmented-slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  height: calc(100% - 6px);
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  z-index: 1;
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#mode-total:checked ~ .segmented-slider {
+  transform: translateX(100%);
+}
+
+/* 9. Recipe Visual Progress Bar Chart */
+.recipe-visual {
+  display: flex;
+  height: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--border-color);
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.bar-portion {
+  height: 100%;
+  transition: var(--transition-smooth);
+}
+
+.portion-col { background-color: var(--color-col); }
+.portion-pbs { background-color: var(--color-pbs); }
+.portion-sfm { background-color: var(--color-sfm); }
+.portion-naoh { background-color: var(--color-naoh); }
+
+/* Spheroid portions */
+.spheroid-portion-cell { background-color: var(--color-sph-cell); }
+.spheroid-portion-media { background-color: var(--color-sph-media); }
+
+.recipe-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-sub);
+}
+
+.color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot-col { background-color: var(--color-col); }
+.dot-pbs { background-color: var(--color-pbs); }
+.dot-sfm { background-color: var(--color-sfm); }
+.dot-naoh { background-color: var(--color-naoh); }
+
+.spheroid-dot-cell { background-color: var(--color-sph-cell); }
+.spheroid-dot-media { background-color: var(--color-sph-media); }
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 4px 0;
+}
+
+.sub-divider {
+  border: 0;
+  border-top: 1px dashed var(--border-color);
+  margin: 8px 0;
+}
+
+.result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.92rem;
+  color: var(--text-sub);
+}
+
+.accent-row {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.total-row {
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.result-value {
+  font-family: 'Inter', monospace;
+  font-size: 1.05rem;
+}
+
+.result-value .unit {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.ratio-guide-text {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.precaution-box {
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 4px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  animation: pageFadeIn 0.5s ease forwards;
+}
+
+.precaution-emoji {
+  font-size: 1.05rem;
+}
+
+.precaution-text {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-sub);
+  font-weight: 500;
+}
+
+.title-conc-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--bg-preset-active);
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-left: 6px;
+  display: inline-block;
+}
+
+.inline-conc-tag {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.inline-conc-tag-total {
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  opacity: 0.85;
+  font-weight: 600;
+  margin-left: 6px;
+  display: inline-block;
+}
+
+/* 10. Toss Warning styles */
+.card-warning {
+  background-color: var(--bg-warning);
+  border: 1px solid var(--border-warning);
+  border-radius: 20px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: warningPulse 0.4s ease forwards;
+}
+
+@keyframes warningPulse {
+  0% { transform: scale(0.97); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.warning-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-warning);
+}
+
+.warning-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.warning-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.warning-desc {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--text-warning);
+  opacity: 0.9;
+}
+
+/* 11. Sticky Bottom Buttons */
+.sticky-bottom-action {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, var(--bg-app) 75%, rgba(242, 244, 246, 0));
+  padding: 16px 24px 24px;
+  z-index: 10;
+}
+
+.dark-theme .sticky-bottom-action {
+  background: linear-gradient(to top, var(--bg-app) 75%, rgba(15, 23, 34, 0));
+}
+
+.btn-toss-secondary {
+  width: 100%;
+  background-color: var(--bg-preset);
+  color: var(--text-sub);
+  border: none;
+  font-size: 0.98rem;
+  font-weight: 600;
+  padding: 14px 0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-toss-secondary:active {
+  transform: scale(0.97);
+  background-color: var(--border-color);
+}
+
+.duration-fade {
+  transition: var(--transition-smooth);
+}
+.duration-fade.locked {
+  opacity: 0.9;
+}
+.duration-fade.locked input {
+  background-color: var(--bg-preset);
+}
+
+.focus-ring-anim input:focus {
+  animation: pulseShadow 1.5s infinite;
+}
+
+@keyframes pulseShadow {
+  0% { box-shadow: 0 0 0 0 rgba(255, 160, 0, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(255, 160, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 160, 0, 0); }
+}
+
+/* 12. Hemocytometer & Spheroid Layouts */
+.hemo-summary-card {
+  border: 1px solid var(--border-color);
+  background-color: rgba(255, 160, 0, 0.03);
+}
+
+.dark-theme .hemo-summary-card {
+  background-color: rgba(255, 160, 0, 0.05);
+}
+
+.text-primary-theme {
+  color: var(--color-primary) !important;
+}
+
+.large-result-row {
+  padding: 4px 0;
+}
+
+.large-result-row .result-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.text-blue {
+  color: #ffa000 !important; /* Orange accent in dark theme for consistency */
+}
+
+.text-emerald {
+  color: #10b981 !important;
+  font-weight: 700;
+}
+
+.card-sub-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: -8px;
+  line-height: 1.45;
+}
+
+/* Scientific input row styles */
+.input-row-scientific {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.scientific-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--bg-app);
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.scientific-input-row input {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  outline: none;
+  padding: 0;
+  transition: var(--transition-fast);
+}
+
+.sc-input-base {
+  width: 60px;
+  text-align: right;
+}
+
+.sc-power-wrapper {
+  display: inline-block;
+  position: relative;
+  top: -8px;
+  margin-left: 2px;
+}
+
+.sc-input-power {
+  width: 28px !important;
+  text-align: center;
+  font-size: 0.75rem !important;
+  border-bottom: 1.5px solid var(--border-color) !important;
+  border-radius: 0 !important;
+  padding: 0 0 2px 0 !important;
+}
+
+.sc-input-power:focus {
+  border-bottom-color: var(--color-primary) !important;
+}
+
+.sc-multiply {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.sc-base {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  user-select: none;
+}
+
+.sc-power {
+  font-size: 0.75rem;
+  vertical-align: super;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-left: -4px;
+  margin-right: 2px;
+  user-select: none;
+}
+
+.sc-unit {
+  margin-left: auto;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.scientific-input-row input:focus {
+  color: var(--color-primary);
+}
+
+.card-warning-inline {
+  background-color: var(--bg-warning);
+  border: 1px solid var(--border-warning);
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-warning);
+  margin-top: 4px;
+  animation: warningPulse 0.4s ease forwards;
+}
+
+/* Spheroid page specific helpers */
+.stock-calc-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: -6px;
+  padding-right: 4px;
+}
+
+.stock-calc-hint strong {
+  font-family: 'Inter', monospace;
+  color: var(--text-main);
+}

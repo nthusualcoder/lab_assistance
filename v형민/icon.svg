@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffa000" />
+      <stop offset="100%" stop-color="#ff3d00" />
+    </linearGradient>
+  </defs>
+  <!-- Background Card -->
+  <rect width="512" height="512" rx="128" fill="url(#orangeGrad)" />
+  
+  <!-- Beaker / Flask Graphic (White) -->
+  <path d="M190 120h132v40l-70 110v100c0 11 9 20 20 20h-84c11 0 20-9 20-20V270l-70-110v-40z" fill="none" stroke="#ffffff" stroke-width="24" stroke-linejoin="round" stroke-linecap="round" />
+  
+  <!-- Measurement Lines on Beaker -->
+  <line x1="220" y1="310" x2="250" y2="310" stroke="#ffffff" stroke-width="16" stroke-linecap="round" />
+  <line x1="220" y1="270" x2="240" y2="270" stroke="#ffffff" stroke-width="16" stroke-linecap="round" />
+  
+  <!-- Spheroids / Cell Aggregates Theme Graphics (Clusters of bubbles) -->
+  <circle cx="340" cy="230" r="24" fill="#ffffff" opacity="0.9" />
+  <circle cx="356" cy="216" r="12" fill="#ffffff" opacity="0.9" />
+  <circle cx="324" cy="244" r="14" fill="#ffffff" opacity="0.9" />
+  <circle cx="348" cy="250" r="10" fill="#ffffff" opacity="0.9" />
+  
+  <circle cx="210" cy="215" r="12" fill="#ffffff" opacity="0.75" />
+  <circle cx="290" cy="250" r="8" fill="#ffffff" opacity="0.6" />
+</svg>
