@@ -238,8 +238,20 @@ document.addEventListener('DOMContentLoaded', () => {
       calculateAndRender();
     }
   });
+  inputCInit.addEventListener('change', (e) => {
+    if (state.preset === 'custom') {
+      state.cInit = parseFloat(e.target.value) || 0;
+      calculateAndRender();
+    }
+  });
 
   inputCTarget.addEventListener('input', (e) => {
+    if (state.preset === 'custom') {
+      state.cTarget = parseFloat(e.target.value) || 0;
+      calculateAndRender();
+    }
+  });
+  inputCTarget.addEventListener('change', (e) => {
     if (state.preset === 'custom') {
       state.cTarget = parseFloat(e.target.value) || 0;
       calculateAndRender();
@@ -264,6 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
   radioModeTotal.addEventListener('change', updateInputMode);
 
   inputVolume.addEventListener('input', (e) => {
+    state.volume = parseFloat(e.target.value) || 0;
+    calculateAndRender();
+  });
+  inputVolume.addEventListener('change', (e) => {
     state.volume = parseFloat(e.target.value) || 0;
     calculateAndRender();
   });
@@ -462,6 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener('input', calculateHemocytometer);
+      el.addEventListener('change', calculateHemocytometer);
     }
   });
 
@@ -594,6 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener('input', calculateSpheroid);
+      el.addEventListener('change', calculateSpheroid);
     }
   });
 
@@ -620,10 +638,29 @@ document.addEventListener('DOMContentLoaded', () => {
       navigator.serviceWorker.register('./sw.js')
         .then((reg) => {
           console.log('Service Worker registered successfully (v형민):', reg.scope);
+          // Detect updates
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('New service worker version detected! Auto-reloading page.');
+                window.location.reload();
+              }
+            });
+          });
         })
         .catch((err) => {
           console.log('Service Worker registration failed (v형민):', err);
         });
+    });
+
+    // Reload the page when the controller changes
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
     });
   }
 

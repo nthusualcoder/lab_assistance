@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lab-calc-hm-v2.1.2';
+const CACHE_NAME = 'lab-calc-hm-v2.2.0';
 const ASSETS = [
   './index.html',
   './styles.css',
@@ -35,18 +35,46 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Intercept requests and serve from cache
+// Intercept requests and serve with appropriate cache strategies
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+  
+  // Network-First strategy for HTML files and root path to prevent stale layouts
+  if (url.pathname.endsWith('index.html') || url.pathname === '/' || url.pathname.endsWith('/')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // If successful network call, update the cache with the fresh resource
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, clone);
+          });
+          return response;
+        })
+        .catch(() => {
+          // If offline, fallback to cache
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+
+  // Cache-First strategy for static assets (CSS, JS, icons)
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(event.request).catch(() => {
-        // Fallback
+      return fetch(event.request).then((response) => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, clone);
+        });
+        return response;
       });
     })
   );
 });
+
