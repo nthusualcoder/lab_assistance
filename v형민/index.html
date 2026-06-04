@@ -417,7 +417,7 @@
               </div>
             </div>
             <div class="input-field-container">
-              <span class="input-field-label">세포액 총 부피 ($V_{current}$)</span>
+              <span class="input-field-label">세포액 총 부피 (V_stock)</span>
               <div class="floating-input-group static-label-input">
                 <input type="number" id="sph-current-vol" value="5.0" step="0.1" min="0.001" placeholder=" ">
                 <span class="input-suffix">mL</span>
@@ -452,7 +452,7 @@
           </div>
 
           <div class="input-field-container">
-            <span class="input-field-label">Well당 Microwell 수 ($M_{well}$)</span>
+            <span class="input-field-label">Well당 Microwell 수</span>
             <div class="floating-input-group static-label-input">
               <input type="number" id="sph-microwells" value="1200" min="1" step="1" placeholder=" ">
               <span class="input-suffix">개</span>
@@ -460,7 +460,7 @@
           </div>
 
           <div class="input-field-container">
-            <span class="input-field-label">Microwell당 세포 수 ($N_{micro}$)</span>
+            <span class="input-field-label">Microwell당 세포 수</span>
             <div class="floating-input-group static-label-input">
               <input type="number" id="sph-cells-per-micro" value="200" min="1" step="1" placeholder=" ">
               <span class="input-suffix">cells</span>
@@ -468,7 +468,7 @@
           </div>
 
           <div class="input-field-container">
-            <span class="input-field-label">최종 분주 준비 부피 ($V_{\text{final\_prep}}$)</span>
+            <span class="input-field-label">최종 분주 준비 부피</span>
             <div class="floating-input-group static-label-input">
               <input type="number" id="sph-final-vol" value="10.0" step="0.1" min="0.001" placeholder=" ">
               <span class="input-suffix">mL</span>
@@ -507,22 +507,22 @@
 
           <div class="result-list">
             <div class="result-row">
-              <span class="result-name">Well당 필요 세포 수 ($N_{well}$)</span>
+              <span class="result-name">Well당 필요 세포 수</span>
               <span class="result-value text-blue" id="res-sph-well-cells">2.40 &times; 10<sup>5</sup> cells</span>
             </div>
             <div class="result-row">
-              <span class="result-name">목표 총 필요 세포 수 ($N_{required}$)</span>
+              <span class="result-name">목표 총 필요 세포 수</span>
               <span class="result-value" id="res-sph-required-cells">2.40 &times; 10<sup>6</sup> cells</span>
             </div>
             
             <hr class="sub-divider">
             
             <div class="result-row accent-row">
-              <span class="result-name">세포 현탁액 따낼 부피 ($V_{take}$)</span>
+              <span class="result-name">세포 현탁액 따낼 부피 (원액 부피)</span>
               <span class="result-value text-emerald"><span id="res-sph-take-vol">1200.00</span> <span class="unit">µL</span></span>
             </div>
             <div class="result-row">
-              <span class="result-name">추가할 새 배지 부피 ($V_{media}$)</span>
+              <span class="result-name">추가할 새 배지 부피</span>
               <span class="result-value"><span id="res-sph-media-vol">8800.00</span> <span class="unit">µL</span></span>
             </div>
             

@@ -380,58 +380,75 @@ document.addEventListener('DOMContentLoaded', () => {
   function calculateHemocytometer() {
     if (!pageHemocytometer) return;
 
-    const cells = parseFloat(document.getElementById('hemo-cells').value) || 0;
-    const stockVolume = parseFloat(document.getElementById('hemo-volume').value) || 0;
+    const hemoCellsInput = document.getElementById('hemo-cells');
+    const hemoVolumeInput = document.getElementById('hemo-volume');
+    if (!hemoCellsInput || !hemoVolumeInput) return;
+
+    const cells = parseFloat(hemoCellsInput.value) || 0;
+    const stockVolume = parseFloat(hemoVolumeInput.value) || 0;
 
     // cell concentration per mL = cells * 2 * 10^4 = cells * 20000
     const density = cells * 20000;
     const totalCells = density * stockVolume;
 
-    document.getElementById('hemo-res-density').innerHTML = formatScientificHTML(density, "cells/mL");
-    document.getElementById('hemo-res-total-cells').innerHTML = formatScientificHTML(totalCells, "cells");
+    const resDensityEl = document.getElementById('hemo-res-density');
+    const resTotalCellsEl = document.getElementById('hemo-res-total-cells');
+    if (resDensityEl) resDensityEl.innerHTML = formatScientificHTML(density, "cells/mL");
+    if (resTotalCellsEl) resTotalCellsEl.innerHTML = formatScientificHTML(totalCells, "cells");
 
-    const harvestBase = parseFloat(document.getElementById('harvest-base').value) || 0;
-    const harvestExp = parseFloat(document.getElementById('harvest-exponent').value) || 0;
-    const targetCells = harvestBase * Math.pow(10, harvestExp);
-    
-    const resHarvestVolSpan = document.getElementById('res-harvest-vol');
-    if (density > 0 && targetCells > 0) {
-      const harvestVol = (targetCells / density) * 1000;
-      resHarvestVolSpan.textContent = harvestVol.toFixed(2);
-    } else {
-      resHarvestVolSpan.textContent = "0.00";
+    const harvestBaseInput = document.getElementById('harvest-base');
+    const harvestExponentInput = document.getElementById('harvest-exponent');
+    if (harvestBaseInput && harvestExponentInput) {
+      const harvestBase = parseFloat(harvestBaseInput.value) || 0;
+      const harvestExp = parseFloat(harvestExponentInput.value) || 0;
+      const targetCells = harvestBase * Math.pow(10, harvestExp);
+      
+      const resHarvestVolSpan = document.getElementById('res-harvest-vol');
+      if (resHarvestVolSpan) {
+        if (density > 0 && targetCells > 0) {
+          const harvestVol = (targetCells / density) * 1000;
+          resHarvestVolSpan.textContent = harvestVol.toFixed(2);
+        } else {
+          resHarvestVolSpan.textContent = "0.00";
+        }
+      }
     }
 
-    const diluteBase = parseFloat(document.getElementById('dilute-base').value) || 0;
-    const diluteExp = parseFloat(document.getElementById('dilute-exponent').value) || 0;
-    const targetDensity = diluteBase * Math.pow(10, diluteExp);
-    const targetVolume = parseFloat(document.getElementById('dilute-volume').value) || 0;
+    const diluteBaseInput = document.getElementById('dilute-base');
+    const diluteExponentInput = document.getElementById('dilute-exponent');
+    const diluteVolumeInput = document.getElementById('dilute-volume');
+    if (diluteBaseInput && diluteExponentInput && diluteVolumeInput) {
+      const diluteBase = parseFloat(diluteBaseInput.value) || 0;
+      const diluteExp = parseFloat(diluteExponentInput.value) || 0;
+      const targetDensity = diluteBase * Math.pow(10, diluteExp);
+      const targetVolume = parseFloat(diluteVolumeInput.value) || 0;
 
-    const errorCardHemo = document.getElementById('hemo-error-card');
-    const resultListHemo = document.getElementById('hemo-dilute-result-list');
-    const resCellVolSpan = document.getElementById('res-dilute-cell-vol');
-    const resMediaVolSpan = document.getElementById('res-dilute-media-vol');
-    const resTotalVolSpan = document.getElementById('res-dilute-total-vol');
+      const errorCardHemo = document.getElementById('hemo-error-card');
+      const resultListHemo = document.getElementById('hemo-dilute-result-list');
+      const resCellVolSpan = document.getElementById('res-dilute-cell-vol');
+      const resMediaVolSpan = document.getElementById('res-dilute-media-vol');
+      const resTotalVolSpan = document.getElementById('res-dilute-total-vol');
 
-    if (targetDensity > density && density > 0) {
-      errorCardHemo.classList.remove('hidden');
-      resultListHemo.classList.add('hidden');
-    } else {
-      errorCardHemo.classList.add('hidden');
-      resultListHemo.classList.remove('hidden');
-
-      if (density > 0 && targetDensity > 0 && targetVolume > 0) {
-        const cellVol = targetVolume * (targetDensity / density) * 1000;
-        const totalVol = targetVolume * 1000;
-        const mediaVol = totalVol - cellVol;
-
-        resCellVolSpan.textContent = cellVol.toFixed(2);
-        resMediaVolSpan.textContent = Math.max(0, mediaVol).toFixed(2);
-        resTotalVolSpan.textContent = totalVol.toFixed(2);
+      if (targetDensity > density && density > 0) {
+        if (errorCardHemo) errorCardHemo.classList.remove('hidden');
+        if (resultListHemo) resultListHemo.classList.add('hidden');
       } else {
-        resCellVolSpan.textContent = "0.00";
-        resMediaVolSpan.textContent = "0.00";
-        resTotalVolSpan.textContent = "0.00";
+        if (errorCardHemo) errorCardHemo.classList.add('hidden');
+        if (resultListHemo) resultListHemo.classList.remove('hidden');
+
+        if (density > 0 && targetDensity > 0 && targetVolume > 0) {
+          const cellVol = targetVolume * (targetDensity / density) * 1000;
+          const totalVol = targetVolume * 1000;
+          const mediaVol = totalVol - cellVol;
+
+          if (resCellVolSpan) resCellVolSpan.textContent = cellVol.toFixed(2);
+          if (resMediaVolSpan) resMediaVolSpan.textContent = Math.max(0, mediaVol).toFixed(2);
+          if (resTotalVolSpan) resTotalVolSpan.textContent = totalVol.toFixed(2);
+        } else {
+          if (resCellVolSpan) resCellVolSpan.textContent = "0.00";
+          if (resMediaVolSpan) resMediaVolSpan.textContent = "0.00";
+          if (resTotalVolSpan) resTotalVolSpan.textContent = "0.00";
+        }
       }
     }
   }
@@ -470,6 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   function calculateSpheroid() {
     if (!pageSpheroid) return;
+    if (!inputSphHemoCells || !inputSphCurrentVol || !inputSphPlateWells || !inputSphMicrowells || !inputSphCellsPerMicro || !inputSphFinalVol) return;
 
     // 1. Parse current stock information from Hemocytometer inputs
     const cellsCount = parseFloat(inputSphHemoCells.value) || 0;
@@ -480,8 +498,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const nTotal = cCurrent * vCurrent;
 
     // Display stock density and total cells
-    sphResDensity.innerHTML = formatScientificHTML(cCurrent, "cells/mL");
-    sphResTotalCells.innerHTML = formatScientificHTML(nTotal, "cells");
+    if (sphResDensity) sphResDensity.innerHTML = formatScientificHTML(cCurrent, "cells/mL");
+    if (sphResTotalCells) sphResTotalCells.innerHTML = formatScientificHTML(nTotal, "cells");
 
     // 2. Parse target setup information
     const plateWells = parseInt(inputSphPlateWells.value) || 0;
@@ -533,34 +551,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. Render UI according to status
     if (hasError) {
-      sphResultCard.classList.add('hidden');
-      sphErrorCard.classList.remove('hidden');
-      
-      sphErrorTitle.textContent = errTitleText;
-      sphErrorDesc.innerHTML = errDescText;
+      if (sphResultCard) sphResultCard.classList.add('hidden');
+      if (sphErrorCard) {
+        sphErrorCard.classList.remove('hidden');
+        if (sphErrorTitle) sphErrorTitle.textContent = errTitleText;
+        if (sphErrorDesc) sphErrorDesc.innerHTML = errDescText;
+      }
     } else {
-      sphErrorCard.classList.add('hidden');
-      sphResultCard.classList.remove('hidden');
+      if (sphErrorCard) sphErrorCard.classList.add('hidden');
+      if (sphResultCard) {
+        sphResultCard.classList.remove('hidden');
 
-      // Success recipe calculation
-      const vTake = (nRequired / cCurrent) * 1000;
-      const vTotalPrepUL = vFinalPrep * 1000;
-      const vMedia = vTotalPrepUL - vTake;
+        // Success recipe calculation
+        const vTake = (nRequired / cCurrent) * 1000;
+        const vTotalPrepUL = vFinalPrep * 1000;
+        const vMedia = vTotalPrepUL - vTake;
 
-      // Display numeric outputs
-      resSphWellCells.innerHTML = formatScientificHTML(nWell, "cells");
-      resSphRequiredCells.innerHTML = formatScientificHTML(nRequired, "cells");
-      
-      resSphTakeVol.textContent = vTake.toFixed(2);
-      resSphMediaVol.textContent = Math.max(0, vMedia).toFixed(2);
-      resSphTotalVol.textContent = vTotalPrepUL.toFixed(2);
+        // Display numeric outputs
+        if (resSphWellCells) resSphWellCells.innerHTML = formatScientificHTML(nWell, "cells");
+        if (resSphRequiredCells) resSphRequiredCells.innerHTML = formatScientificHTML(nRequired, "cells");
+        
+        if (resSphTakeVol) resSphTakeVol.textContent = vTake.toFixed(2);
+        if (resSphMediaVol) resSphMediaVol.textContent = Math.max(0, vMedia).toFixed(2);
+        if (resSphTotalVol) resSphTotalVol.textContent = vTotalPrepUL.toFixed(2);
 
-      // Portion bars
-      const cellPercent = (vTake / vTotalPrepUL) * 100;
-      const mediaPercent = (Math.max(0, vMedia) / vTotalPrepUL) * 100;
+        // Portion bars
+        const cellPercent = (vTake / vTotalPrepUL) * 100;
+        const mediaPercent = (Math.max(0, vMedia) / vTotalPrepUL) * 100;
 
-      barSphCell.style.width = `${cellPercent}%`;
-      barSphMedia.style.width = `${mediaPercent}%`;
+        if (barSphCell) barSphCell.style.width = `${cellPercent}%`;
+        if (barSphMedia) barSphMedia.style.width = `${mediaPercent}%`;
+      }
     }
   }
 
@@ -579,15 +600,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Spheroid reset button trigger
   if (btnResetFormSph) {
     btnResetFormSph.addEventListener('click', () => {
-      inputSphHemoCells.value = "100";
-      inputSphCurrentVol.value = "5.0";
-      inputSphPlateWells.value = "24";
-      inputSphMicrowells.value = "1200";
-      inputSphCellsPerMicro.value = "200";
-      inputSphFinalVol.value = "10.0";
+      if (inputSphHemoCells) inputSphHemoCells.value = "100";
+      if (inputSphCurrentVol) inputSphCurrentVol.value = "5.0";
+      if (inputSphPlateWells) inputSphPlateWells.value = "24";
+      if (inputSphMicrowells) inputSphMicrowells.value = "1200";
+      if (inputSphCellsPerMicro) inputSphCellsPerMicro.value = "200";
+      if (inputSphFinalVol) inputSphFinalVol.value = "10.0";
 
       calculateSpheroid();
-      inputSphHemoCells.focus();
+      if (inputSphHemoCells) inputSphHemoCells.focus();
     });
   }
 
