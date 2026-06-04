@@ -63,21 +63,21 @@
 
 2. **목표 분주 용량 계산**:
    - **Well당 필요 세포 수 ($N_{well}$)**:
-     $$N_{well} = \text{웰 당 microwell 개수} \times \text{microwell당 세포 수}$$
-   - **Plate 전체 필요 세포 수 ($N_{plate}$)**:
-     $$N_{plate} = N_{well} \times \text{Plate당 Well 수}$$
+     $$N_{well} = \text{Well당 Microwell 수} \times \text{Microwell당 세포 수}$$
    - **목표 총 필요 세포 수 ($N_{required}$)**:
-     $$N_{required} = N_{well} \times \text{최종 분주 준비 부피 (mL)}$$
+     $$N_{required} = \text{Well 수} \times N_{well}$$
+   - **목표 총 준비 부피 ($V_{total\_prep}$, $\mu\text{L}$)**:
+     $$V_{total\_prep} = \text{Well 수} \times \text{Well당 분주 부피 (mL)} \times 1000\ \mu\text{L}$$
 
 3. **조제 레시피 공식**:
    - **따내야 할 세포 현탁액 원액 부피 ($V_{take}$, $\mu\text{L}$)**:
      $$V_{take} = \frac{N_{required}}{C_{current}} \times 1000\ \mu\text{L}$$
    - **추가해야 할 새 배지(Media) 부피 ($V_{media}$, $\mu\text{L}$)**:
-     $$V_{media} = (\text{최종 분주 준비 부피} \times 1000) - V_{take}\ \mu\text{L}$$
+     $$V_{media} = V_{total\_prep} - V_{take}$$
 
 4. **제약 및 예외 조건**:
    - **보유 세포 수 부족**: 필요한 총 세포 수 $N_{required}$가 현재 보유 중인 총 세포 수 $N_{total}$보다 많은 경우 제조 불가 경고 노출.
-   - **희석 조제 불가능**: 따내야 할 부피 $V_{take}$가 최종 제조 부피보다 큰 경우(즉, 목표 농도가 원액 농도보다 높은 경우) 제조 불가 경고 노출.
+   - **희석 조제 불가능**: 따내야 할 부피 $V_{take}$가 목표 총 준비 부피 $V_{total\_prep}$보다 큰 경우(즉, 목표 농도가 원액 농도보다 높은 경우) 제조 불가 경고 노출.
    - **UI 깨짐 방지**: 레이블이 매우 긴 스페로이드 설정의 특성을 감안해 인풋 필드를 세로로 1열 정렬하여 모바일 화면에서 겹치거나 깨지는 현상을 방지합니다.
 
 ---

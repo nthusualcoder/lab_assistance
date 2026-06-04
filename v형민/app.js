@@ -522,13 +522,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const plateWells = parseInt(inputSphPlateWells.value) || 0;
     const mWell = parseInt(inputSphMicrowells.value) || 0;
     const nMicro = parseInt(inputSphCellsPerMicro.value) || 0;
-    const vFinalPrep = parseFloat(inputSphFinalVol.value) || 0; // mL
+    const vFinalPrep = parseFloat(inputSphFinalVol.value) || 0; // mL (Well당 분주 부피)
 
-    // Mathematical targets
-    const cTarget = mWell * nMicro;
-    const nWell = mWell * nMicro;
-    const nPlate = nWell * plateWells;
-    const nRequired = cTarget * vFinalPrep;
+    // Mathematical targets (개정 공식)
+    const nWell = mWell * nMicro; // Well당 필요 세포 수
+    const nPlate = nWell * plateWells; // Well 수 * Well당 필요 세포 수
+    const nRequired = nWell * plateWells; // 목표 총 필요 세포 수 (Well 수 * Well당 필요 세포 수)
+    const cTarget = nWell / vFinalPrep; // 목표 세포 농도 (cells/mL) = Well당 필요 세포 수 / Well당 분주 부피
+    const vTotalPrepUL = plateWells * vFinalPrep * 1000; // 목표 총 준비 부피 (uL) = Well 수 * Well당 분주 부피 (mL) * 1000
 
     // Display dynamic required cells information summary
     if (sphRequiredInfoBox) {
@@ -537,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       sphRequiredInfoBox.innerHTML = `
         👉 <strong>1 well당 필요 세포 수</strong>: ${nWell.toLocaleString()} cells (${formatScientificHTML(nWell, "cells")}, 총 ${nWellKorean} 개)<br>
-        👉 <strong>1 plate 전체 (${plateWells} well) 필요 세포 수</strong>: ${nPlate.toLocaleString()} cells (${formatScientificHTML(nPlate, "cells")}, 총 ${nPlateKorean} 개)
+        👉 <strong>총 (${plateWells} well) 필요 세포 수</strong>: ${nPlate.toLocaleString()} cells (${formatScientificHTML(nPlate, "cells")}, 총 ${nPlateKorean} 개)
       `;
     }
 
@@ -557,7 +558,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // Calculate taking volume in uL: V_take = (N_required / C_current) * 1000
       const vTake = (nRequired / cCurrent) * 1000;
-      const vTotalPrepUL = vFinalPrep * 1000;
 
       if (vTake > vTotalPrepUL) {
         hasError = true;
@@ -581,7 +581,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Success recipe calculation
         const vTake = (nRequired / cCurrent) * 1000;
-        const vTotalPrepUL = vFinalPrep * 1000;
         const vMedia = vTotalPrepUL - vTake;
 
         // Display numeric outputs
@@ -619,11 +618,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnResetFormSph) {
     btnResetFormSph.addEventListener('click', () => {
       if (inputSphHemoCells) inputSphHemoCells.value = "100";
-      if (inputSphCurrentVol) inputSphCurrentVol.value = "5.0";
+      if (inputSphCurrentVol) inputSphCurrentVol.value = "1.0";
       if (inputSphPlateWells) inputSphPlateWells.value = "24";
       if (inputSphMicrowells) inputSphMicrowells.value = "1200";
       if (inputSphCellsPerMicro) inputSphCellsPerMicro.value = "200";
-      if (inputSphFinalVol) inputSphFinalVol.value = "10.0";
+      if (inputSphFinalVol) inputSphFinalVol.value = "1.0";
 
       calculateSpheroid();
       if (inputSphHemoCells) inputSphHemoCells.focus();
