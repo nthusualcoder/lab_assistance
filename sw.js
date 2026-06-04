@@ -4,7 +4,9 @@ const ASSETS = [
   './styles.css',
   './app.js',
   './manifest.json',
-  './icon.svg'
+  './icon.svg',
+  './icon_192.png',
+  './icon_512.png'
 ];
 
 // Install Service Worker and cache assets
@@ -35,7 +37,6 @@ self.addEventListener('activate', (event) => {
 
 // Intercept requests and serve from cache
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests locally
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
@@ -44,7 +45,7 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
       return fetch(event.request).catch(() => {
-        // Fallback or offline indicator if fetch fails
+        // Fallback
       });
     })
   );
