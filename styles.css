@@ -1179,9 +1179,16 @@ body {
 
 /* Completed state */
 .dyeing-step-card.step-completed {
-  opacity: 0.6;
   background-color: rgba(229, 232, 235, 0.05);
   border-color: var(--border-color);
+}
+
+.dyeing-step-card.step-completed .step-num-title,
+.dyeing-step-card.step-completed .step-desc,
+.dyeing-step-card.step-completed .step-timer-wrapper,
+.dyeing-step-card.step-completed .step-badges,
+.dyeing-step-card.step-completed .cell-preset-group {
+  opacity: 0.55;
 }
 
 .dark-theme .dyeing-step-card.step-completed {
