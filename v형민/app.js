@@ -73,12 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Spheroid Form Elements
   const inputSphHemoCells = document.getElementById('sph-hemo-cells');
   const inputSphCurrentVol = document.getElementById('sph-current-vol');
+  const inputSphNewVol = document.getElementById('sph-new-vol');
   const inputSphPlateWells = document.getElementById('sph-plate-wells');
   const inputSphMicrowells = document.getElementById('sph-microwells');
   const inputSphCellsPerMicro = document.getElementById('sph-cells-per-micro');
   const inputSphFinalVol = document.getElementById('sph-final-vol');
   const sphResDensity = document.getElementById('sph-res-density');
   const sphResTotalCells = document.getElementById('sph-res-total-cells');
+  const sphResNewDensity = document.getElementById('sph-res-new-density');
   const sphRequiredInfoBox = document.getElementById('sph-required-info-box');
   
   // Spheroid Result Elements
@@ -403,8 +405,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cells = parseFloat(hemoCellsInput.value) || 0;
     const stockVolume = parseFloat(hemoVolumeInput.value) || 0;
 
-    // cell concentration per mL = cells * 2 * 10^4 = cells * 20000
-    const density = cells * 20000;
+    // cell concentration per mL = cells * 10^4 = cells * 10000
+    const density = cells * 10000;
     const totalCells = density * stockVolume;
 
     const resDensityEl = document.getElementById('hemo-res-density');
@@ -504,19 +506,26 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   function calculateSpheroid() {
     if (!pageSpheroid) return;
-    if (!inputSphHemoCells || !inputSphCurrentVol || !inputSphPlateWells || !inputSphMicrowells || !inputSphCellsPerMicro || !inputSphFinalVol) return;
+    if (!inputSphHemoCells || !inputSphCurrentVol || !inputSphNewVol || !inputSphPlateWells || !inputSphMicrowells || !inputSphCellsPerMicro || !inputSphFinalVol) return;
 
-    // 1. Parse current stock information from Hemocytometer inputs
+    // 1. Parse previous stock information from Hemocytometer inputs
     const cellsCount = parseFloat(inputSphHemoCells.value) || 0;
     const vCurrent = parseFloat(inputSphCurrentVol.value) || 0;
 
-    // Stock concentration: C_current = cellsCount * 20000 cells/mL
-    const cCurrent = cellsCount * 20000;
+    // Stock concentration: C_current = cellsCount * 10000 cells/mL
+    const cCurrent = cellsCount * 10000;
     const nTotal = cCurrent * vCurrent;
 
-    // Display stock density and total cells
+    // Display previous stock density and total cells
     if (sphResDensity) sphResDensity.innerHTML = formatScientificHTML(cCurrent, "cells/mL");
     if (sphResTotalCells) sphResTotalCells.innerHTML = formatScientificHTML(nTotal, "cells");
+
+    // 1.5. Parse new stock (diluted) volume & calculate new density
+    const vNewCurrent = parseFloat(inputSphNewVol.value) || 0;
+    const cCurrentNew = vNewCurrent > 0 ? (nTotal / vNewCurrent) : 0;
+
+    // Display new dispensed density
+    if (sphResNewDensity) sphResNewDensity.innerHTML = formatScientificHTML(cCurrentNew, "cells/mL");
 
     // 2. Parse target setup information
     const plateWells = parseInt(inputSphPlateWells.value) || 0;
@@ -537,8 +546,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const nPlateKorean = (nPlate / 10000).toFixed(1).replace(".0", "") + "만";
       
       sphRequiredInfoBox.innerHTML = `
-        👉 <strong>1 well당 필요 세포 수</strong>: ${nWell.toLocaleString()} cells (${formatScientificHTML(nWell, "cells")}, 총 ${nWellKorean} 개)<br>
-        👉 <strong>총 (${plateWells} well) 필요 세포 수</strong>: ${nPlate.toLocaleString()} cells (${formatScientificHTML(nPlate, "cells")}, 총 ${nPlateKorean} 개)
+      👉 <strong>1 well당 필요 세포 수</strong>: ${nWell.toLocaleString()} cells (${formatScientificHTML(nWell, "cells")}, 총 ${nWellKorean} 개)<br>
+      👉 <strong>총 (${plateWells} well) 필요 세포 수</strong>: ${nPlate.toLocaleString()} cells (${formatScientificHTML(nPlate, "cells")}, 총 ${nPlateKorean} 개)
       `;
     }
 
@@ -547,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let errTitleText = "";
     let errDescText = "";
 
-    if (vCurrent <= 0 || nTotal <= 0 || mWell <= 0 || nMicro <= 0 || vFinalPrep <= 0 || plateWells <= 0) {
+    if (vCurrent <= 0 || nTotal <= 0 || vNewCurrent <= 0 || mWell <= 0 || nMicro <= 0 || vFinalPrep <= 0 || plateWells <= 0) {
       hasError = true;
       errTitleText = "입력값 오류";
       errDescText = "모든 입력값은 0보다 큰 숫자여야 계산할 수 있습니다.";
@@ -556,13 +565,13 @@ document.addEventListener('DOMContentLoaded', () => {
       errTitleText = "보유 세포 수 부족";
       errDescText = `목표 현탁액을 만들기 위해 총 <strong>${nRequired.toLocaleString()}</strong>개(${formatScientificHTML(nRequired)})의 세포가 필요하지만, 현재 보유 중인 세포는 총 <strong>${nTotal.toLocaleString()}</strong>개(${formatScientificHTML(nTotal)})입니다.`;
     } else {
-      // Calculate taking volume in uL: V_take = (N_required / C_current) * 1000
-      const vTake = (nRequired / cCurrent) * 1000;
+      // Calculate taking volume in uL: V_take = (N_required / C_current_new) * 1000
+      const vTake = (nRequired / cCurrentNew) * 1000;
 
       if (vTake > vTotalPrepUL) {
         hasError = true;
         errTitleText = "희석 조제 불가능";
-        errDescText = `목표 세포 농도(<strong>${cTarget.toLocaleString()}</strong> cells/mL)가 현재 원액 세포 농도(<strong>${cCurrent.toLocaleString()}</strong> cells/mL)보다 높습니다. 원액보다 더 진하게 희석 조제할 수는 없습니다. 원액을 원심분리하여 농축해 주셔야 합니다.`;
+        errDescText = `목표 세포 농도(<strong>${cTarget.toLocaleString()}</strong> cells/mL)가 현재 세포 분주액 농도(<strong>${cCurrentNew.toLocaleString()}</strong> cells/mL)보다 높습니다. 원액보다 더 진하게 희석 조제할 수는 없습니다. 원액을 원심분리하여 농축해 주셔야 합니다.`;
       }
     }
 
@@ -580,7 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sphResultCard.classList.remove('hidden');
 
         // Success recipe calculation
-        const vTake = (nRequired / cCurrent) * 1000;
+        const vTake = (nRequired / cCurrentNew) * 1000;
         const vMedia = vTotalPrepUL - vTake;
 
         // Display numeric outputs
@@ -603,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Register spheroid inputs change triggers
   const sphInputIds = [
-    'sph-hemo-cells', 'sph-current-vol', 'sph-plate-wells',
+    'sph-hemo-cells', 'sph-current-vol', 'sph-new-vol', 'sph-plate-wells',
     'sph-microwells', 'sph-cells-per-micro', 'sph-final-vol'
   ];
   sphInputIds.forEach(id => {
@@ -618,8 +627,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnResetFormSph) {
     btnResetFormSph.addEventListener('click', () => {
       if (inputSphHemoCells) inputSphHemoCells.value = "100";
-      if (inputSphCurrentVol) inputSphCurrentVol.value = "1.0";
-      if (inputSphPlateWells) inputSphPlateWells.value = "24";
+      if (inputSphCurrentVol) inputSphCurrentVol.value = "15.0";
+      if (inputSphNewVol) inputSphNewVol.value = "1.0";
+      if (inputSphPlateWells) inputSphPlateWells.value = "1";
       if (inputSphMicrowells) inputSphMicrowells.value = "1200";
       if (inputSphCellsPerMicro) inputSphCellsPerMicro.value = "200";
       if (inputSphFinalVol) inputSphFinalVol.value = "1.0";

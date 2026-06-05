@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lab-calc-v1';
+const CACHE_NAME = 'lab-calc-v1.5.0';
 const ASSETS = [
   './index.html',
   './styles.css',

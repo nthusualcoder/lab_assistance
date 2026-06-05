@@ -50,8 +50,20 @@
         <p class="main-subtitle">안녕하세요,<br>오늘도 오차 없는 정밀한 실험을 시작해볼까요?</p>
       </div>
 
-      <div class="section-title">계산기 목록</div>
-      <div class="menu-list">
+      <div class="home-tab-wrapper">
+        <div class="segmented-control home-tab-control">
+          <input type="radio" name="home-tab" id="tab-tools" value="tools" checked>
+          <label for="tab-tools">계산 도구 (Tools)</label>
+          
+          <input type="radio" name="home-tab" id="tab-timers" value="timers">
+          <label for="tab-timers">실험 타이머 (Timers)</label>
+          
+          <div class="segmented-slider"></div>
+        </div>
+      </div>
+
+      <!-- Tools Group -->
+      <div id="group-tools" class="menu-list">
         <!-- Collagen Calculator Card -->
         <div class="menu-card" data-target="collagen">
           <div class="menu-card-left">
@@ -96,8 +108,39 @@
         </div>
       </div>
 
+      <!-- Timers Group -->
+      <div id="group-timers" class="menu-list hidden">
+        <!-- Split Timer Card -->
+        <div class="menu-card" data-target="split-timer">
+          <div class="menu-card-left">
+            <div class="menu-icon-wrapper timer-split-bg">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menu-icon"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="menu-card-info">
+              <span class="menu-card-title">스플릿 타이머 (Split Timer)</span>
+              <span class="menu-card-desc">세포 passage 및 다중 배양 시간 개별 관리</span>
+            </div>
+          </div>
+          <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+
+        <!-- Dyeing Timer Card -->
+        <div class="menu-card" data-target="dyeing-timer">
+          <div class="menu-card-left">
+            <div class="menu-icon-wrapper timer-dyeing-bg">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menu-icon"><path d="M12 2v6M12 22v-6M17 5H7M19 19H5M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path></svg>
+            </div>
+            <div class="menu-card-info">
+              <span class="menu-card-title">염색 타이머 (Staining Timer)</span>
+              <span class="menu-card-desc">IHC, ICC 등 염색 단계별 프로토콜 타이머</span>
+            </div>
+          </div>
+          <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </div>
+
       <div class="footer-info">
-        <p>© 2026 실험 보조 계산기 v1.0.0</p>
+        <p>© 2026 실험 보조 계산기 v1.5.0</p>
         <p>인터넷 없이도 작동하는 오프라인 로컬 앱입니다.</p>
       </div>
     </section>
@@ -385,6 +428,50 @@
       <!-- Sticky Bottom Button Area (Toss standard style) -->
       <div class="sticky-bottom-action">
         <button id="btn-reset-form-hemo" class="btn-toss-secondary">입력 초기화</button>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 4. SPLIT TIMER PAGE SECTION                   -->
+    <!-- ============================================== -->
+    <section id="page-split-timer" class="app-page">
+      <div class="header-nav">
+        <button id="btn-back-home-split" class="btn-back" aria-label="홈으로 돌아가기">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="back-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </button>
+        <h2 class="nav-title">스플릿 타이머</h2>
+      </div>
+
+      <div class="page-content">
+        <div class="card-toss text-center padding-xl">
+          <div class="placeholder-icon-wrapper timer-split-bg margin-bottom-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="placeholder-large-icon"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <h3 class="placeholder-title">스플릿 타이머 준비 중</h3>
+          <p class="placeholder-desc">세포 passage 및 다중 배양 시간을 독립적으로 트래킹할 수 있는 타이머 기능이 곧 구현될 예정입니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 5. DYEING TIMER PAGE SECTION                   -->
+    <!-- ============================================== -->
+    <section id="page-dyeing-timer" class="app-page">
+      <div class="header-nav">
+        <button id="btn-back-home-dyeing" class="btn-back" aria-label="홈으로 돌아가기">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="back-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </button>
+        <h2 class="nav-title">염색 타이머</h2>
+      </div>
+
+      <div class="page-content">
+        <div class="card-toss text-center padding-xl">
+          <div class="placeholder-icon-wrapper timer-dyeing-bg margin-bottom-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="placeholder-large-icon"><path d="M12 2v6M12 22v-6M17 5H7M19 19H5M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path></svg>
+          </div>
+          <h3 class="placeholder-title">염색 타이머 준비 중</h3>
+          <p class="placeholder-desc">IHC, ICC 등 염색 단계별 프로토콜 시간을 관리하고 알림을 제공하는 타이머 기능이 곧 구현될 예정입니다.</p>
+        </div>
       </div>
     </section>
   </div>

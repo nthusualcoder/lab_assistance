@@ -1076,3 +1076,67 @@ body {
   margin-top: 4px;
   animation: warningPulse 0.4s ease forwards;
 }
+
+/* ==========================================================================
+   13. Home Tab Navigation & Timer Placeholders
+   ========================================================================== */
+.home-tab-wrapper {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+#tab-timers:checked ~ .segmented-slider {
+  transform: translateX(100%);
+}
+
+.timer-split-bg {
+  background: linear-gradient(135deg, #a78bfa, #3182f6);
+}
+
+.timer-dyeing-bg {
+  background: linear-gradient(135deg, #f472b6, #8b5cf6);
+}
+
+/* Placeholder styles */
+.text-center {
+  text-align: center;
+}
+
+.padding-xl {
+  padding: 48px 24px;
+}
+
+.margin-bottom-lg {
+  margin-bottom: 24px;
+}
+
+.placeholder-icon-wrapper {
+  width: 88px;
+  height: 88px;
+  border-radius: 26px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.placeholder-large-icon {
+  width: 44px;
+  height: 44px;
+}
+
+.placeholder-title {
+  font-size: 1.28rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+
+.placeholder-desc {
+  font-size: 0.88rem;
+  color: var(--text-sub);
+  line-height: 1.6;
+  max-width: 300px;
+  margin: 0 auto;
+}

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   const state = {
     activePage: 'home',
+    homeTab: 'tools', // 'tools' or 'timers'
     preset: 'preset-1', // 'preset-1', 'preset-2', 'custom'
     cInit: 8.64,
     cTarget: 6.00,
@@ -22,12 +23,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const pageHome = document.getElementById('page-home');
   const pageCollagen = document.getElementById('page-collagen');
   const pageHemocytometer = document.getElementById('page-hemocytometer');
+  const pageSplitTimer = document.getElementById('page-split-timer');
+  const pageDyeingTimer = document.getElementById('page-dyeing-timer');
+  
+  // Home tab groups
+  const radioTabTools = document.getElementById('tab-tools');
+  const radioTabTimers = document.getElementById('tab-timers');
+  const groupTools = document.getElementById('group-tools');
+  const groupTimers = document.getElementById('group-timers');
   
   // Navigation buttons
   const btnGoCollagen = document.querySelector('.menu-card[data-target="collagen"]');
   const btnGoHemocytometer = document.querySelector('.menu-card[data-target="hemocytometer"]');
+  const btnGoSplit = document.querySelector('.menu-card[data-target="split-timer"]');
+  const btnGoDyeing = document.querySelector('.menu-card[data-target="dyeing-timer"]');
   const btnBackHome = document.getElementById('btn-back-home');
   const btnBackHomeHemo = document.getElementById('btn-back-home-hemo');
+  const btnBackHomeSplit = document.getElementById('btn-back-home-split');
+  const btnBackHomeDyeing = document.getElementById('btn-back-home-dyeing');
   
   // Theme Controls
   const themeToggle = document.getElementById('theme-toggle');
@@ -86,6 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
     pageHome.classList.remove('active');
     pageCollagen.classList.remove('active');
     if (pageHemocytometer) pageHemocytometer.classList.remove('active');
+    if (pageSplitTimer) pageSplitTimer.classList.remove('active');
+    if (pageDyeingTimer) pageDyeingTimer.classList.remove('active');
 
     if (pageId === 'home') {
       pageHome.classList.add('active');
@@ -99,18 +114,47 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.app-container').scrollTop = 0;
         calculateHemocytometer();
       }
+    } else if (pageId === 'split-timer') {
+      if (pageSplitTimer) {
+        pageSplitTimer.classList.add('active');
+        document.querySelector('.app-container').scrollTop = 0;
+      }
+    } else if (pageId === 'dyeing-timer') {
+      if (pageDyeingTimer) {
+        pageDyeingTimer.classList.add('active');
+        document.querySelector('.app-container').scrollTop = 0;
+      }
     }
   }
 
+  // Home Screen Tab Switcher logic
+  function updateHomeTab() {
+    if (!radioTabTools || !radioTabTimers || !groupTools || !groupTimers) return;
+    
+    if (radioTabTools.checked) {
+      state.homeTab = 'tools';
+      groupTools.classList.remove('hidden');
+      groupTimers.classList.add('hidden');
+    } else if (radioTabTimers.checked) {
+      state.homeTab = 'timers';
+      groupTools.classList.add('hidden');
+      groupTimers.classList.remove('hidden');
+    }
+  }
+
+  if (radioTabTools) radioTabTools.addEventListener('change', updateHomeTab);
+  if (radioTabTimers) radioTabTimers.addEventListener('change', updateHomeTab);
+
   // Event Listeners for Nav
-  btnGoCollagen.addEventListener('click', () => switchPage('collagen'));
-  if (btnGoHemocytometer) {
-    btnGoHemocytometer.addEventListener('click', () => switchPage('hemocytometer'));
-  }
-  btnBackHome.addEventListener('click', () => switchPage('home'));
-  if (btnBackHomeHemo) {
-    btnBackHomeHemo.addEventListener('click', () => switchPage('home'));
-  }
+  if (btnGoCollagen) btnGoCollagen.addEventListener('click', () => switchPage('collagen'));
+  if (btnGoHemocytometer) btnGoHemocytometer.addEventListener('click', () => switchPage('hemocytometer'));
+  if (btnGoSplit) btnGoSplit.addEventListener('click', () => switchPage('split-timer'));
+  if (btnGoDyeing) btnGoDyeing.addEventListener('click', () => switchPage('dyeing-timer'));
+  
+  if (btnBackHome) btnBackHome.addEventListener('click', () => switchPage('home'));
+  if (btnBackHomeHemo) btnBackHomeHemo.addEventListener('click', () => switchPage('home'));
+  if (btnBackHomeSplit) btnBackHomeSplit.addEventListener('click', () => switchPage('home'));
+  if (btnBackHomeDyeing) btnBackHomeDyeing.addEventListener('click', () => switchPage('home'));
 
   // ==========================================
   // 4. Dark/Light Theme Handler (Default to Dark)

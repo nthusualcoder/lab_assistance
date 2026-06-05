@@ -46,7 +46,7 @@
 
 ### 3.2. Hemocytometer 세포 카운팅 계산기
 - **세포 농도 계산 공식**:
-  - 16칸 전체 측정 기준: $C_{cell} = N \times 2 \times 10^4 \text{ cells/mL}$
+  - 16칸 전체 측정 기준: $C_{cell} = N \times 10^4 \text{ cells/mL}$
 - **하위 기능 2.1: 필요한 세포 수 수확 (Harvest)**:
   - $V_{harvest} = \frac{T_{target}}{C_{cell}} \times 1000\ \mu\text{L}$
 - **하위 기능 2.2: 특정 세포 농도/부피 제조 (Dilution)**:
@@ -54,12 +54,17 @@
   - $V_{media} = (V_{target} \times 1000) - V_{cell}\ \mu\text{L}$
 
 ### 3.3. Microwell Spheroid 계산기 [신규]
-일정량의 세포 현탁액(Stock)을 이용해 스페로이드를 배양하기 위한 현탁 희석액 조제법 계산.
+일정량의 세포 현탁액(이전/현재)을 이용해 스페로이드를 배양하기 위한 현탁 희석액 조제법 계산.
 
-1. **원액 세포 농도 ($C_{current}$)**:
-   $$C_{current} = \text{총 카운팅 세포 수 (16칸 전체)} \times 20,000\ \text{cells/mL}$$
-   - **보유 총 세포 수 ($N_{total}$)**:
-     $$N_{total} = C_{current} \times V_{current}\ (\text{현재 현탁액 부피 (mL)})$$
+1. **이전 세포 현탁액 정보**:
+   - **이전 원액 세포 농도 ($C_{old}$)**:
+     $$C_{old} = \text{총 카운팅 세포 수 (16칸 전체)} \times 10,000\ \text{cells/mL}$$
+   - **이전 보유 총 세포 수 ($N_{total}$)**:
+     $$N_{total} = C_{old} \times V_{old}\ (\text{이전 세포액 총 부피 (mL)})$$
+
+1.5. **현재 세포 현탁액 정보**:
+   - **현재 세포 분주액 농도 ($C_{current\_new}$)**:
+     $$C_{current\_new} = \frac{N_{total}}{V_{current\_new}}\ (\text{현재 세포액 총 부피 (mL)})$$
 
 2. **목표 분주 용량 계산**:
    - **Well당 필요 세포 수 ($N_{well}$)**:
@@ -71,13 +76,13 @@
 
 3. **조제 레시피 공식**:
    - **따내야 할 세포 현탁액 원액 부피 ($V_{take}$, $\mu\text{L}$)**:
-     $$V_{take} = \frac{N_{required}}{C_{current}} \times 1000\ \mu\text{L}$$
+     $$V_{take} = \frac{N_{required}}{C_{current\_new}} \times 1000\ \mu\text{L}$$
    - **추가해야 할 새 배지(Media) 부피 ($V_{media}$, $\mu\text{L}$)**:
      $$V_{media} = V_{total\_prep} - V_{take}$$
 
 4. **제약 및 예외 조건**:
    - **보유 세포 수 부족**: 필요한 총 세포 수 $N_{required}$가 현재 보유 중인 총 세포 수 $N_{total}$보다 많은 경우 제조 불가 경고 노출.
-   - **희석 조제 불가능**: 따내야 할 부피 $V_{take}$가 목표 총 준비 부피 $V_{total\_prep}$보다 큰 경우(즉, 목표 농도가 원액 농도보다 높은 경우) 제조 불가 경고 노출.
+   - **희석 조제 불가능**: 따내야 할 부피 $V_{take}$가 목표 총 준비 부피 $V_{total\_prep}$보다 큰 경우(즉, 목표 농도가 현재 세포 분주액 농도 $C_{current\_new}$보다 높은 경우) 제조 불가 경고 노출.
    - **UI 깨짐 방지**: 레이블이 매우 긴 스페로이드 설정의 특성을 감안해 인풋 필드를 세로로 1열 정렬하여 모바일 화면에서 겹치거나 깨지는 현상을 방지합니다.
 
 ---
