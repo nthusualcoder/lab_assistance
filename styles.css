@@ -1248,15 +1248,18 @@ body {
 
 .step-completed-badge {
   color: #10b981;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   align-self: flex-start;
   background-color: rgba(16, 185, 129, 0.1);
-  padding: 2px 8px;
+  padding: 2px 5px;
   border-radius: 6px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  white-space: nowrap;
 }
 
 .step-body {

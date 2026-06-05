@@ -547,8 +547,8 @@ document.addEventListener('DOMContentLoaded', () => {
     steps: [
       {
         id: 1,
-        title: "1단계: PFA 고정",
-        desc: "PFA로 10분 고정",
+        title: "1단계: PFA Fixation",
+        desc: "PFA로 10분 Fixation",
         type: "timer",
         defaultDuration: 600, // 10 mins
         duration: 600,
@@ -562,8 +562,8 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 2,
-        title: "2단계: PFA 석션 & PBS 워싱",
-        desc: "PFA 석션 하고 염색용 PBS로 워싱 후 염색용 PBS 담아주기",
+        title: "2단계: PFA Suction & PBS Washing",
+        desc: "PFA Suction하고 염색용 PBS로 Washing 후 염색용 PBS 보존",
         type: "action",
         status: "idle",
         isLightOff: false,
@@ -571,8 +571,8 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 3,
-        title: "3단계: Triton X-100 침투",
-        desc: "PBS 석션하고 0.1%~0.3% Triton X 샘플 잠길만큼 넣어준 후 20분 반응",
+        title: "3단계: Triton X-100 Penetration",
+        desc: "PBS Suction하고 0.1%~0.3% Triton X 샘플 잠길만큼 넣어준 후 20분 반응",
         type: "timer",
         defaultDuration: 1200, // 20 mins
         duration: 1200,
@@ -585,8 +585,8 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 4,
-        title: "4단계: Triton X 석션 & PBS 워싱",
-        desc: "Triton X 석션하고 PBS 워싱",
+        title: "4단계: Triton X Suction & PBS Washing",
+        desc: "Triton X Suction하고 PBS Washing",
         type: "action",
         status: "idle",
         isLightOff: false,
@@ -594,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 5,
-        title: "5단계: BSA 블로킹",
+        title: "5단계: BSA Blocking",
         desc: "1% BSA로 잠길만큼 넣어준 후 1시간 반응 (더 오래 해도 됨)",
         type: "timer",
         defaultDuration: 3600, // 1 hour
@@ -608,8 +608,8 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 6,
-        title: "6단계: BSA 석션 & PBS 워싱",
-        desc: "BSA 석션 후 PBS로 워싱",
+        title: "6단계: BSA Suction & PBS Washing",
+        desc: "BSA Suction하고 PBS로 Washing 후 PBS 보존",
         type: "action",
         status: "idle",
         isLightOff: false,
@@ -617,25 +617,16 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 7,
-        title: "7단계: PBS 보존",
-        desc: "염색용 PBS에 담아두기",
-        type: "action",
-        status: "idle",
-        isLightOff: false,
-        isRepetitive: false
-      },
-      {
-        id: 8,
-        title: "8단계: DAPI & Phalloidin 혼합 (차광 ⚠️)",
-        desc: "DAPI, Phalloidin(200x)를 PBS와 200:1 비율로 섞어 vortexing (지금부터 항상 호일 감싸기)",
+        title: "7단계: DAPI & Phalloidin 혼합 (차광 ⚠️)",
+        desc: "DAPI, Phalloidin(200x)를 PBS와 200:1 비율로 섞어 vortexing",
         type: "action",
         status: "idle",
         isLightOff: true,
         isRepetitive: false
       },
       {
-        id: 9,
-        title: "9단계: 염색약 반응 (차광 ⚠️)",
+        id: 8,
+        title: "8단계: 염색약 반응 (차광 ⚠️)",
         desc: "샘플이 완전히 잠길만큼 염색약 용액 넣어주고 20분 반응",
         type: "timer",
         defaultDuration: 1200, // 20 mins
@@ -648,9 +639,9 @@ document.addEventListener('DOMContentLoaded', () => {
         intervalId: null
       },
       {
-        id: 10,
-        title: "10단계: 최종 PBS 워싱 (차광 ⚠️, 반복 🔄)",
-        desc: "PBS로 워싱 5분 반응 (3번 이상 수행)",
+        id: 9,
+        title: "9단계: 최종 PBS Washing (차광 ⚠️, 반복 🔄)",
+        desc: "PBS로 Washing 5분 반응 (3번 이상 수행)",
         type: "timer",
         defaultDuration: 300, // 5 mins
         duration: 300,
