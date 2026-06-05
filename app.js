@@ -563,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         id: 2,
         title: "2단계: PFA Suction & PBS Washing",
-        desc: "PFA Suction하고 염색용 PBS로 Washing 후 염색용 PBS 보존",
+        desc: "PFA Suction하고 PBS로 Washing 후 PBS 보존",
         type: "action",
         status: "idle",
         isLightOff: false,
@@ -766,7 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
         badgesHTML += `<span class="light-off-badge">⚠️ 차광 (호일 감싸기)</span>`;
       }
       if (step.isRepetitive) {
-        badgesHTML += `<span class="repeat-badge">반복: ${step.repeatCount}회 완료</span>`;
+        badgesHTML += `<span class="repeat-badge">반복: ${step.repeatCount}/3회 완료</span>`;
       }
 
       let rightBadgeHTML = '';
@@ -816,14 +816,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       card.innerHTML = `
-        <div class="step-header">
-          <div class="step-header-left">
-            <span class="step-num-title">${step.title}</span>
-            <span class="step-desc">${step.desc}</span>
-            ${badgesHTML ? `<div class="step-badges">${badgesHTML}</div>` : ''}
-          </div>
+        <div class="step-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <span class="step-num-title">${step.title}</span>
           ${rightBadgeHTML}
         </div>
+        <span class="step-desc" style="margin-top: 4px; display: block; width: 100%; word-break: keep-all;">${step.desc}</span>
+        ${badgesHTML ? `<div class="step-badges" style="margin-top: 6px;">${badgesHTML}</div>` : ''}
         ${bodyHTML}
       `;
 
@@ -886,6 +884,12 @@ document.addEventListener('DOMContentLoaded', () => {
       clearInterval(step.intervalId);
       step.intervalId = null;
     }
+    
+    // If resetting from completed (i.e. click '재실행'), reset repeat count
+    if (step.status === 'completed' && step.isRepetitive) {
+      step.repeatCount = 0;
+    }
+    
     step.status = 'idle';
     if (step.type === 'timer') {
       step.remaining = step.duration;
@@ -900,23 +904,32 @@ document.addEventListener('DOMContentLoaded', () => {
       step.intervalId = null;
     }
 
-    step.status = 'completed';
     if (step.isRepetitive) {
       step.repeatCount += 1;
+      if (step.repeatCount < 3) {
+        step.status = 'idle';
+        step.remaining = step.duration; // Reset timer for next repeat
+      } else {
+        step.status = 'completed';
+      }
+    } else {
+      step.status = 'completed';
     }
 
     updateProgressCount();
     renderDyeingSteps();
 
-    // Auto-focus next step card
-    const nextStep = stainingState.steps.find(s => s.id === step.id + 1);
-    if (nextStep) {
-      setTimeout(() => {
-        const nextCard = document.querySelector(`.dyeing-step-card[data-step-id="${nextStep.id}"]`);
-        if (nextCard) {
-          nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      }, 300);
+    // Auto-focus next step card (only scroll if step is fully completed)
+    if (step.status === 'completed') {
+      const nextStep = stainingState.steps.find(s => s.id === step.id + 1);
+      if (nextStep) {
+        setTimeout(() => {
+          const nextCard = document.querySelector(`.dyeing-step-card[data-step-id="${nextStep.id}"]`);
+          if (nextCard) {
+            nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }, 300);
+      }
     }
   }
 
