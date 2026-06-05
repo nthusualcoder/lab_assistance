@@ -1140,3 +1140,335 @@ body {
   max-width: 300px;
   margin: 0 auto;
 }
+
+/* ==========================================================================
+   14. Staining Timer UI Styles
+   ========================================================================== */
+.dyeing-slider {
+  width: calc(50% - 3px);
+}
+
+#tab-dyeing-antibody:checked ~ .dyeing-slider {
+  transform: translateX(100%);
+}
+
+.disabled-tab-label {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+.dyeing-step-card {
+  background-color: var(--bg-card);
+  border-radius: 20px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Active running state */
+.dyeing-step-card.active-step {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.15), var(--shadow-card);
+}
+
+/* Completed state */
+.dyeing-step-card.step-completed {
+  opacity: 0.6;
+  background-color: rgba(229, 232, 235, 0.05);
+  border-color: var(--border-color);
+}
+
+.dark-theme .dyeing-step-card.step-completed {
+  background-color: rgba(44, 58, 78, 0.05);
+}
+
+.step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.step-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.step-num-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.step-desc {
+  font-size: 0.82rem;
+  color: var(--text-sub);
+  line-height: 1.45;
+}
+
+.step-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.light-off-badge {
+  background-color: #1a1a1a;
+  color: #ffb700;
+  border: 1px solid #ffb700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dark-theme .light-off-badge {
+  background-color: #000000;
+}
+
+.repeat-badge {
+  background-color: rgba(49, 130, 246, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(49, 130, 246, 0.2);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.step-completed-badge {
+  color: #10b981;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  background-color: rgba(16, 185, 129, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.step-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  background-color: var(--bg-preset);
+  padding: 10px 16px;
+  border-radius: 12px;
+}
+
+.step-timer-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.step-timer-wrapper:hover .btn-edit-time {
+  color: var(--color-primary);
+}
+
+.step-timer-text {
+  font-family: 'Inter', monospace;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.btn-edit-time {
+  color: var(--text-muted);
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+}
+
+.btn-edit-time svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+.step-actions-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-step-action {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-step-action:active {
+  transform: scale(0.95);
+}
+
+.btn-step-start {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.btn-step-start:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-step-pause {
+  background-color: #f59e0b;
+  color: #ffffff;
+}
+
+.btn-step-reset {
+  background-color: var(--border-color);
+  color: var(--text-sub);
+}
+
+.btn-step-done {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* Modal Overlay & Styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 1;
+  transition: var(--transition-smooth);
+  padding: 20px;
+}
+
+.modal-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-card {
+  background-color: var(--bg-card);
+  border-radius: 24px;
+  padding: 24px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: modalSlideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.modal-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: -8px;
+}
+
+.modal-input-group {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin: 6px 0;
+}
+
+.modal-input-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-input-field input {
+  width: 72px;
+  padding: 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-app);
+  border-radius: 12px;
+  color: var(--text-main);
+  text-align: center;
+  outline: none;
+}
+
+.modal-input-field input:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-input);
+}
+
+.modal-input-field span {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-sub);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-modal-primary {
+  flex: 1;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  padding: 12px 0;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-modal-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-modal-secondary {
+  flex: 1;
+  background-color: var(--bg-preset);
+  color: var(--text-sub);
+  border: none;
+  padding: 12px 0;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-modal-secondary:active {
+  background-color: var(--border-color);
+}

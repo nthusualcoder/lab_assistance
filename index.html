@@ -465,15 +465,62 @@
       </div>
 
       <div class="page-content">
-        <div class="card-toss text-center padding-xl">
-          <div class="placeholder-icon-wrapper timer-dyeing-bg margin-bottom-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="placeholder-large-icon"><path d="M12 2v6M12 22v-6M17 5H7M19 19H5M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path></svg>
+        <!-- 1. Staining Type Segmented Control -->
+        <div class="segmented-control dyeing-tab-control">
+          <input type="radio" name="dyeing-tab" id="tab-dyeing-dapi" value="dapi" checked>
+          <label for="tab-dyeing-dapi">DAPI & Phalloidin</label>
+          
+          <input type="radio" name="dyeing-tab" id="tab-dyeing-antibody" value="antibody">
+          <label for="tab-dyeing-antibody" id="label-dyeing-antibody" class="disabled-tab-label">Antibody (준비중) 🔒</label>
+          
+          <div class="segmented-slider dyeing-slider"></div>
+        </div>
+
+        <!-- 2. Push Notification Permission Request Card -->
+        <div id="dyeing-notification-card" class="card-warning-inline hidden" style="margin-top: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.1rem;">🔔</span>
+            <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-warning);">타이머 완료 푸시 알림 및 소리를 허용해 주세요.</span>
           </div>
-          <h3 class="placeholder-title">염색 타이머 준비 중</h3>
-          <p class="placeholder-desc">IHC, ICC 등 염색 단계별 프로토콜 시간을 관리하고 알림을 제공하는 타이머 기능이 곧 구현될 예정입니다.</p>
+          <button id="btn-dyeing-request-notif" class="btn-install-sm" style="padding: 6px 12px; font-size: 0.78rem;">허용</button>
+        </div>
+
+        <!-- 3. Protocol Header Info -->
+        <div class="dyeing-header-control" style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; padding: 0 4px;">
+          <span class="dyeing-progress-text" style="font-size: 0.85rem; font-weight: 600; color: var(--text-sub);">진행도: <strong id="dyeing-progress-count" style="color: var(--color-primary);">0</strong> / 10 완료</span>
+          <button id="btn-reset-dyeing-protocol" class="btn-toss-secondary" style="width: auto; padding: 6px 14px; border-radius: 10px; font-size: 0.8rem;">전체 초기화</button>
+        </div>
+
+        <!-- 4. Step-by-step Protocol List -->
+        <div id="dyeing-step-list" class="dyeing-step-list" style="display: flex; flex-direction: column; gap: 14px; margin-top: 4px;">
+          <!-- Dynamic staining cards rendered via app.js -->
         </div>
       </div>
     </section>
+  </div>
+
+  <!-- Time Edit Modal Dialog -->
+  <div id="edit-time-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h3 class="modal-title">타이머 시간 설정</h3>
+      <p class="modal-subtitle" id="modal-step-title">1단계: PFA 고정</p>
+      
+      <div class="modal-input-group">
+        <div class="modal-input-field">
+          <input type="number" id="edit-modal-min" min="0" max="999" value="10">
+          <span>분</span>
+        </div>
+        <div class="modal-input-field">
+          <input type="number" id="edit-modal-sec" min="0" max="59" value="0">
+          <span>초</span>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button id="btn-modal-cancel" class="btn-modal-secondary">취소</button>
+        <button id="btn-modal-save" class="btn-modal-primary">적용하기</button>
+      </div>
+    </div>
   </div>
 
   <script src="./app.js"></script>

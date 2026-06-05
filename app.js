@@ -540,7 +540,507 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================
-  // 11. Initial Run
+  // 11. Staining Timer Logic
+  // ==========================================
+  
+  const stainingState = {
+    steps: [
+      {
+        id: 1,
+        title: "1단계: PFA 고정",
+        desc: "PFA로 10분 고정",
+        type: "timer",
+        defaultDuration: 600, // 10 mins
+        duration: 600,
+        remaining: 600,
+        status: "idle",
+        isLightOff: false,
+        isRepetitive: false,
+        repeatCount: 0,
+        targetTime: null,
+        intervalId: null
+      },
+      {
+        id: 2,
+        title: "2단계: PFA 석션 & PBS 워싱",
+        desc: "PFA 석션 하고 염색용 PBS로 워싱 후 염색용 PBS 담아주기",
+        type: "action",
+        status: "idle",
+        isLightOff: false,
+        isRepetitive: false
+      },
+      {
+        id: 3,
+        title: "3단계: Triton X-100 침투",
+        desc: "PBS 석션하고 0.1%~0.3% Triton X 샘플 잠길만큼 넣어준 후 20분 반응",
+        type: "timer",
+        defaultDuration: 1200, // 20 mins
+        duration: 1200,
+        remaining: 1200,
+        status: "idle",
+        isLightOff: false,
+        isRepetitive: false,
+        targetTime: null,
+        intervalId: null
+      },
+      {
+        id: 4,
+        title: "4단계: Triton X 석션 & PBS 워싱",
+        desc: "Triton X 석션하고 PBS 워싱",
+        type: "action",
+        status: "idle",
+        isLightOff: false,
+        isRepetitive: false
+      },
+      {
+        id: 5,
+        title: "5단계: BSA 블로킹",
+        desc: "1% BSA로 잠길만큼 넣어준 후 1시간 반응 (더 오래 해도 됨)",
+        type: "timer",
+        defaultDuration: 3600, // 1 hour
+        duration: 3600,
+        remaining: 3600,
+        status: "idle",
+        isLightOff: false,
+        isRepetitive: false,
+        targetTime: null,
+        intervalId: null
+      },
+      {
+        id: 6,
+        title: "6단계: BSA 석션 & PBS 워싱",
+        desc: "BSA 석션 후 PBS로 워싱",
+        type: "action",
+        status: "idle",
+        isLightOff: false,
+        isRepetitive: false
+      },
+      {
+        id: 7,
+        title: "7단계: PBS 보존",
+        desc: "염색용 PBS에 담아두기",
+        type: "action",
+        status: "idle",
+        isLightOff: false,
+        isRepetitive: false
+      },
+      {
+        id: 8,
+        title: "8단계: DAPI & Phalloidin 혼합 (차광 ⚠️)",
+        desc: "DAPI, Phalloidin(200x)를 PBS와 200:1 비율로 섞어 vortexing (지금부터 항상 호일 감싸기)",
+        type: "action",
+        status: "idle",
+        isLightOff: true,
+        isRepetitive: false
+      },
+      {
+        id: 9,
+        title: "9단계: 염색약 반응 (차광 ⚠️)",
+        desc: "샘플이 완전히 잠길만큼 염색약 용액 넣어주고 20분 반응",
+        type: "timer",
+        defaultDuration: 1200, // 20 mins
+        duration: 1200,
+        remaining: 1200,
+        status: "idle",
+        isLightOff: true,
+        isRepetitive: false,
+        targetTime: null,
+        intervalId: null
+      },
+      {
+        id: 10,
+        title: "10단계: 최종 PBS 워싱 (차광 ⚠️, 반복 🔄)",
+        desc: "PBS로 워싱 5분 반응 (3번 이상 수행)",
+        type: "timer",
+        defaultDuration: 300, // 5 mins
+        duration: 300,
+        remaining: 300,
+        status: "idle",
+        isLightOff: true,
+        isRepetitive: true,
+        repeatCount: 0,
+        targetTime: null,
+        intervalId: null
+      }
+    ]
+  };
+
+  let currentEditingStep = null;
+
+  // DOM elements cache
+  const tabDyeingAntibody = document.getElementById('tab-dyeing-antibody');
+  const dyeingNotificationCard = document.getElementById('dyeing-notification-card');
+  const btnDyeingRequestNotif = document.getElementById('btn-dyeing-request-notif');
+  const dyeingProgressCount = document.getElementById('dyeing-progress-count');
+  const btnResetDyeingProtocol = document.getElementById('btn-reset-dyeing-protocol');
+  const dyeingStepList = document.getElementById('dyeing-step-list');
+  
+  // Modal elements cache
+  const editTimeModal = document.getElementById('edit-time-modal');
+  const modalStepTitle = document.getElementById('modal-step-title');
+  const editModalMin = document.getElementById('edit-modal-min');
+  const editModalSec = document.getElementById('edit-modal-sec');
+  const btnModalCancel = document.getElementById('btn-modal-cancel');
+  const btnModalSave = document.getElementById('btn-modal-save');
+
+  // Helper: Format duration (mm:ss)
+  function formatDuration(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+
+  // Play synthetic chime sound
+  function playChime() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const playTone = (freq, startTime, duration) => {
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, startTime);
+        gainNode.gain.setValueAtTime(0.15, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration - 0.05);
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      };
+      const now = audioCtx.currentTime;
+      playTone(1318.51, now, 0.3); // E6
+      playTone(1760.00, now + 0.2, 0.45); // A6
+    } catch (e) {
+      console.error('Audio play failed:', e);
+    }
+  }
+
+  // Handle push notification permission card visibility
+  function updateNotificationBanner() {
+    if (!dyeingNotificationCard) return;
+    if (Notification.permission === 'default') {
+      dyeingNotificationCard.classList.remove('hidden');
+    } else {
+      dyeingNotificationCard.classList.add('hidden');
+    }
+  }
+
+  if (btnDyeingRequestNotif) {
+    btnDyeingRequestNotif.addEventListener('click', () => {
+      Notification.requestPermission().then((permission) => {
+        updateNotificationBanner();
+        if (permission === 'granted') {
+          new Notification('실험 보조 계산기', {
+            body: '알림이 성공적으로 설정되었습니다!',
+            icon: './icon_192.png'
+          });
+        }
+      });
+    });
+  }
+
+  // Handle Antibody tab warning
+  if (tabDyeingAntibody) {
+    tabDyeingAntibody.addEventListener('change', () => {
+      if (tabDyeingAntibody.checked) {
+        alert("Antibody 염색 타이머 기능은 현재 준비 중입니다.\n차후 업데이트 예정입니다.");
+        document.getElementById('tab-dyeing-dapi').checked = true;
+      }
+    });
+  }
+
+  // Update overall progress count
+  function updateProgressCount() {
+    const completedCount = stainingState.steps.filter(s => s.status === 'completed').length;
+    if (dyeingProgressCount) {
+      dyeingProgressCount.textContent = completedCount;
+    }
+  }
+
+  // Render protocol steps
+  function renderDyeingSteps() {
+    if (!dyeingStepList) return;
+    dyeingStepList.innerHTML = '';
+
+    stainingState.steps.forEach(step => {
+      const isTimer = step.type === 'timer';
+      const isCompleted = step.status === 'completed';
+      const isRunning = step.status === 'running';
+
+      const card = document.createElement('div');
+      card.className = `dyeing-step-card ${isRunning ? 'active-step' : ''} ${isCompleted ? 'step-completed' : ''}`;
+      card.setAttribute('data-step-id', step.id);
+
+      let badgesHTML = '';
+      if (step.isLightOff) {
+        badgesHTML += `<span class="light-off-badge">⚠️ 차광 (호일 감싸기)</span>`;
+      }
+      if (step.isRepetitive) {
+        badgesHTML += `<span class="repeat-badge">반복: ${step.repeatCount}회 완료</span>`;
+      }
+
+      let rightBadgeHTML = '';
+      if (isCompleted) {
+        rightBadgeHTML = `<span class="step-completed-badge">✓ 완료됨</span>`;
+      }
+
+      let bodyHTML = '';
+      if (isTimer) {
+        bodyHTML = `
+          <div class="step-body">
+            <div class="step-timer-wrapper" data-id="${step.id}">
+              <span class="step-timer-text" id="timer-text-${step.id}">${formatDuration(step.remaining)}</span>
+              <span class="btn-edit-time" title="시간 편집">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </span>
+            </div>
+            <div class="step-actions-group">
+              ${!isCompleted ? `
+                ${isRunning ? `
+                  <button class="btn-step-action btn-step-pause" data-id="${step.id}">일시정지</button>
+                ` : `
+                  <button class="btn-step-action btn-step-start" data-id="${step.id}">${step.status === 'paused' ? '계속' : '시작'}</button>
+                `}
+                <button class="btn-step-action btn-step-reset" data-id="${step.id}">초기화</button>
+                <button class="btn-step-action btn-step-done" data-id="${step.id}">완료</button>
+              ` : `
+                <button class="btn-step-action btn-step-reset" data-id="${step.id}" style="background-color: var(--color-primary); color: #fff;">재실행</button>
+              `}
+            </div>
+          </div>
+        `;
+      } else {
+        bodyHTML = `
+          <div class="step-body" style="justify-content: flex-end; background: none; padding: 0;">
+            <div class="step-actions-group">
+              ${!isCompleted ? `
+                <button class="btn-step-action btn-step-done" data-id="${step.id}">단계 완료</button>
+              ` : `
+                <button class="btn-step-action btn-step-reset" data-id="${step.id}" style="background-color: var(--color-primary); color: #fff;">재실행</button>
+              `}
+            </div>
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="step-header">
+          <div class="step-header-left">
+            <span class="step-num-title">${step.title}</span>
+            <span class="step-desc">${step.desc}</span>
+            ${badgesHTML ? `<div class="step-badges">${badgesHTML}</div>` : ''}
+          </div>
+          ${rightBadgeHTML}
+        </div>
+        ${bodyHTML}
+      `;
+
+      dyeingStepList.appendChild(card);
+    });
+  }
+
+  // Timer actions
+  function startTimer(step) {
+    // Stop other intervals if they are running for safety, but typically steps are sequential
+    if (step.intervalId) clearInterval(step.intervalId);
+
+    step.targetTime = Date.now() + step.remaining * 1000;
+    step.status = 'running';
+    renderDyeingSteps();
+
+    step.intervalId = setInterval(() => {
+      const diff = step.targetTime - Date.now();
+      if (diff <= 0) {
+        // Timer completed!
+        step.remaining = 0;
+        clearInterval(step.intervalId);
+        step.intervalId = null;
+
+        playChime();
+
+        if (Notification.permission === 'granted') {
+          try {
+            new Notification('실험 보조 계산기 - 염색 타이머', {
+              body: `${step.title} 완료되었습니다!`,
+              icon: './icon_192.png'
+            });
+          } catch (err) {
+            console.error('Notification display failed:', err);
+          }
+        }
+
+        completeStep(step);
+      } else {
+        step.remaining = Math.ceil(diff / 1000);
+        const timerTextEl = document.getElementById(`timer-text-${step.id}`);
+        if (timerTextEl) {
+          timerTextEl.textContent = formatDuration(step.remaining);
+        }
+      }
+    }, 200);
+  }
+
+  function pauseTimer(step) {
+    if (step.intervalId) {
+      clearInterval(step.intervalId);
+      step.intervalId = null;
+    }
+    step.status = 'paused';
+    renderDyeingSteps();
+  }
+
+  function resetTimer(step) {
+    if (step.intervalId) {
+      clearInterval(step.intervalId);
+      step.intervalId = null;
+    }
+    step.status = 'idle';
+    if (step.type === 'timer') {
+      step.remaining = step.duration;
+    }
+    updateProgressCount();
+    renderDyeingSteps();
+  }
+
+  function completeStep(step) {
+    if (step.intervalId) {
+      clearInterval(step.intervalId);
+      step.intervalId = null;
+    }
+
+    step.status = 'completed';
+    if (step.isRepetitive) {
+      step.repeatCount += 1;
+    }
+
+    updateProgressCount();
+    renderDyeingSteps();
+
+    // Auto-focus next step card
+    const nextStep = stainingState.steps.find(s => s.id === step.id + 1);
+    if (nextStep) {
+      setTimeout(() => {
+        const nextCard = document.querySelector(`.dyeing-step-card[data-step-id="${nextStep.id}"]`);
+        if (nextCard) {
+          nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 300);
+    }
+  }
+
+  // Open Edit Time Modal
+  function openEditTimeModal(step) {
+    currentEditingStep = step;
+    modalStepTitle.textContent = step.title;
+
+    const mins = Math.floor(step.remaining / 60);
+    const secs = step.remaining % 60;
+
+    editModalMin.value = mins;
+    editModalSec.value = secs;
+
+    editTimeModal.classList.remove('hidden');
+    editModalMin.focus();
+    editModalMin.select();
+  }
+
+  // Modal event listeners
+  if (btnModalCancel) {
+    btnModalCancel.addEventListener('click', () => {
+      editTimeModal.classList.add('hidden');
+      currentEditingStep = null;
+    });
+  }
+
+  if (btnModalSave) {
+    btnModalSave.addEventListener('click', () => {
+      if (!currentEditingStep) return;
+
+      const mins = parseInt(editModalMin.value) || 0;
+      const secs = parseInt(editModalSec.value) || 0;
+      const totalSecs = mins * 60 + secs;
+
+      if (totalSecs <= 0) {
+        alert('시간은 0초보다 길어야 합니다.');
+        return;
+      }
+
+      currentEditingStep.duration = totalSecs;
+      currentEditingStep.remaining = totalSecs;
+
+      // If they edited a completed step, reset it to idle so they can run it
+      if (currentEditingStep.status === 'completed') {
+        currentEditingStep.status = 'idle';
+      }
+
+      editTimeModal.classList.add('hidden');
+      currentEditingStep = null;
+      updateProgressCount();
+      renderDyeingSteps();
+    });
+  }
+
+  // Event Delegation for dynamically rendered steps
+  if (dyeingStepList) {
+    dyeingStepList.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-step-action');
+      const timerWrapper = e.target.closest('.step-timer-wrapper');
+
+      if (btn) {
+        const stepId = parseInt(btn.dataset.id);
+        const step = stainingState.steps.find(s => s.id === stepId);
+        if (!step) return;
+
+        if (btn.classList.contains('btn-step-start')) {
+          startTimer(step);
+        } else if (btn.classList.contains('btn-step-pause')) {
+          pauseTimer(step);
+        } else if (btn.classList.contains('btn-step-reset')) {
+          resetTimer(step);
+        } else if (btn.classList.contains('btn-step-done')) {
+          completeStep(step);
+        }
+      } else if (timerWrapper) {
+        const stepId = parseInt(timerWrapper.dataset.id);
+        const step = stainingState.steps.find(s => s.id === stepId);
+        // Only allow editing if not currently running
+        if (step && step.type === 'timer' && step.status !== 'running') {
+          openEditTimeModal(step);
+        }
+      }
+    });
+  }
+
+  // Reset protocol button
+  if (btnResetDyeingProtocol) {
+    btnResetDyeingProtocol.addEventListener('click', () => {
+      if (confirm('프로토콜 진행 상황을 초기화하시겠습니까? (반복 횟수도 0으로 초기화됩니다)')) {
+        stainingState.steps.forEach(step => {
+          if (step.intervalId) {
+            clearInterval(step.intervalId);
+            step.intervalId = null;
+          }
+          step.status = 'idle';
+          if (step.type === 'timer') {
+            step.duration = step.defaultDuration;
+            step.remaining = step.defaultDuration;
+          }
+          if (step.isRepetitive) {
+            step.repeatCount = 0;
+          }
+        });
+        updateProgressCount();
+        renderDyeingSteps();
+      }
+    });
+  }
+
+  // ==========================================
+  // 12. Initial Run
   // ==========================================
   calculateAndRender();
+  updateNotificationBanner();
+  updateProgressCount();
+  renderDyeingSteps();
 });
