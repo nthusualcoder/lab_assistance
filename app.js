@@ -42,6 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnBackHomeSplit = document.getElementById('btn-back-home-split');
   const btnBackHomeDyeing = document.getElementById('btn-back-home-dyeing');
   
+  // Detachment Timer Elements Cache
+  const detachmentStepList = document.getElementById('detachment-step-list');
+  const btnResetDetachmentProtocol = document.getElementById('btn-reset-detachment-protocol');
+  const detachmentProgressCount = document.getElementById('detachment-progress-count');
+  
   // Theme Controls
   const themeToggle = document.getElementById('theme-toggle');
   const sunIcon = themeToggle.querySelector('.sun-icon');
@@ -656,6 +661,64 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
   };
 
+  const detachmentState = {
+    selectedPreset: 'HEK',
+    steps: [
+      {
+        id: 1,
+        title: "1단계: 배지 제거 및 Washing",
+        desc: "MEDIA 제거 후 DPBS 2ml washing",
+        type: "action",
+        status: "idle"
+      },
+      {
+        id: 2,
+        title: "2단계: TrypLE 처리",
+        desc: "dpbs suction 후 triple E 2ml 넣어주기",
+        type: "action",
+        status: "idle"
+      },
+      {
+        id: 3,
+        title: "3단계: Incubation",
+        desc: "Incubation (37도, CO2 5%) timer",
+        type: "timer",
+        defaultDuration: 300,
+        duration: 300,
+        remaining: 300,
+        status: "idle",
+        targetTime: null,
+        intervalId: null
+      },
+      {
+        id: 4,
+        title: "4단계: 중화 및 회수",
+        desc: "media 8~10ml(triple E의 4~5배) 넣어주고 15ml tube에 옮겨 담기",
+        type: "action",
+        status: "idle"
+      },
+      {
+        id: 5,
+        title: "5단계: 원심분리 (Centrifuge)",
+        desc: "centrifuge 1000rpm, 3min 4도 timer",
+        type: "timer",
+        defaultDuration: 180,
+        duration: 180,
+        remaining: 180,
+        status: "idle",
+        targetTime: null,
+        intervalId: null
+      },
+      {
+        id: 6,
+        title: "6단계: 세포 현탁 및 분산",
+        desc: "media 제거 후 새 media 1ml 주입",
+        type: "action",
+        status: "idle"
+      }
+    ]
+  };
+
   let currentEditingStep = null;
 
   // DOM elements cache
@@ -970,6 +1033,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      const isStaining = stainingState.steps.includes(currentEditingStep);
+
       currentEditingStep.duration = totalSecs;
       currentEditingStep.remaining = totalSecs;
 
@@ -980,8 +1045,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       editTimeModal.classList.add('hidden');
       currentEditingStep = null;
-      updateProgressCount();
-      renderDyeingSteps();
+
+      if (isStaining) {
+        updateProgressCount();
+        renderDyeingSteps();
+      } else {
+        updateDetachmentProgressCount();
+        renderDetachmentSteps();
+      }
     });
   }
 
@@ -1041,10 +1112,311 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
+  // 11-2. Cell Detachment Timer Logic
+  // ==========================================
+  
+  // Update overall progress count for detachment
+  function updateDetachmentProgressCount() {
+    const completedCount = detachmentState.steps.filter(s => s.status === 'completed').length;
+    if (detachmentProgressCount) {
+      detachmentProgressCount.textContent = completedCount;
+    }
+  }
+
+  // Render detachment protocol steps
+  function renderDetachmentSteps() {
+    if (!detachmentStepList) return;
+    detachmentStepList.innerHTML = '';
+
+    detachmentState.steps.forEach(step => {
+      const isTimer = step.type === 'timer';
+      const isCompleted = step.status === 'completed';
+      const isRunning = step.status === 'running';
+
+      const card = document.createElement('div');
+      card.className = `dyeing-step-card ${isRunning ? 'active-step' : ''} ${isCompleted ? 'step-completed' : ''}`;
+      card.setAttribute('data-step-id', step.id);
+
+      let rightBadgeHTML = '';
+      if (isCompleted) {
+        rightBadgeHTML = `<span class="step-completed-badge">✓ 완료됨</span>`;
+      }
+
+      let bodyHTML = '';
+      if (isTimer) {
+        let presetHTML = '';
+        if (step.id === 3) {
+          presetHTML = `
+            <div class="cell-preset-group" style="margin-bottom: 10px;">
+              <button class="btn-cell-preset ${detachmentState.selectedPreset === 'HEK' ? 'active' : ''}" data-preset="HEK">HEK (5분)</button>
+              <button class="btn-cell-preset ${detachmentState.selectedPreset === 'HaCaT' ? 'active' : ''}" data-preset="HaCaT">HaCaT (8분)</button>
+              <button class="btn-cell-preset ${detachmentState.selectedPreset === 'Caco-2' ? 'active' : ''}" data-preset="Caco-2">Caco-2 (5분)</button>
+              <button class="btn-cell-preset ${detachmentState.selectedPreset === 'MDCK' ? 'active' : ''}" data-preset="MDCK">MDCK (5분)</button>
+              <button class="btn-cell-preset ${detachmentState.selectedPreset === 'NIH' ? 'active' : ''}" data-preset="NIH">NIH (4분)</button>
+            </div>
+          `;
+        }
+
+        bodyHTML = `
+          ${presetHTML}
+          <div class="step-body">
+            <div class="step-timer-wrapper" data-id="${step.id}">
+              <span class="step-timer-text" id="detachment-timer-text-${step.id}">${formatDuration(step.remaining)}</span>
+              <span class="btn-edit-time" title="시간 편집">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </span>
+            </div>
+            <div class="step-actions-group">
+              ${!isCompleted ? `
+                ${isRunning ? `
+                  <button class="btn-step-action btn-step-pause" data-id="${step.id}">일시정지</button>
+                ` : `
+                  <button class="btn-step-action btn-step-start" data-id="${step.id}">${step.status === 'paused' ? '계속' : '시작'}</button>
+                `}
+                ${step.id === 3 ? `
+                  <button class="btn-step-action btn-add-minute" data-id="${step.id}">+ 1분 추가</button>
+                ` : ''}
+                <button class="btn-step-action btn-step-reset" data-id="${step.id}">초기화</button>
+                <button class="btn-step-action btn-step-done" data-id="${step.id}">완료</button>
+              ` : `
+                ${step.id === 3 ? `
+                  <button class="btn-step-action btn-add-minute" data-id="${step.id}" style="background-color: var(--bg-preset); color: var(--color-primary);">+ 1분 추가</button>
+                ` : ''}
+                <button class="btn-step-action btn-step-reset" data-id="${step.id}" style="background-color: var(--color-primary); color: #fff;">재실행</button>
+              `}
+            </div>
+          </div>
+        `;
+      } else {
+        let extraButtonHTML = '';
+        if (step.id === 6 && isCompleted) {
+          extraButtonHTML = `<button class="btn-goto-hemo">📊 Hemocytometer 계산기로 이동</button>`;
+        }
+        bodyHTML = `
+          <div class="step-body" style="justify-content: flex-end; background: none; padding: 0; display: block; width: 100%;">
+            <div class="step-actions-group" style="justify-content: flex-end;">
+              ${!isCompleted ? `
+                <button class="btn-step-action btn-step-done" data-id="${step.id}">단계 완료</button>
+              ` : `
+                <button class="btn-step-action btn-step-reset" data-id="${step.id}" style="background-color: var(--color-primary); color: #fff;">재실행</button>
+              `}
+            </div>
+            ${extraButtonHTML}
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="step-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <span class="step-num-title">${step.title}</span>
+          ${rightBadgeHTML}
+        </div>
+        <span class="step-desc" style="margin-top: 4px; display: block; width: 100%; word-break: keep-all;">${step.desc}</span>
+        ${bodyHTML}
+      `;
+
+      detachmentStepList.appendChild(card);
+    });
+  }
+
+  // Timer actions
+  function startDetachmentTimer(step) {
+    if (step.intervalId) clearInterval(step.intervalId);
+
+    step.targetTime = Date.now() + step.remaining * 1000;
+    step.status = 'running';
+    renderDetachmentSteps();
+
+    step.intervalId = setInterval(() => {
+      const diff = step.targetTime - Date.now();
+      if (diff <= 0) {
+        step.remaining = 0;
+        clearInterval(step.intervalId);
+        step.intervalId = null;
+
+        playChime();
+
+        if (Notification.permission === 'granted') {
+          try {
+            new Notification('실험 보조 계산기 - 세포 떼어내기', {
+              body: `${step.title} 완료되었습니다!`,
+              icon: './icon_192.png'
+            });
+          } catch (err) {
+            console.error('Notification display failed:', err);
+          }
+        }
+
+        completeDetachmentStep(step);
+      } else {
+        step.remaining = Math.ceil(diff / 1000);
+        const timerTextEl = document.getElementById(`detachment-timer-text-${step.id}`);
+        if (timerTextEl) {
+          timerTextEl.textContent = formatDuration(step.remaining);
+        }
+      }
+    }, 200);
+  }
+
+  function pauseDetachmentTimer(step) {
+    if (step.intervalId) {
+      clearInterval(step.intervalId);
+      step.intervalId = null;
+    }
+    step.status = 'paused';
+    renderDetachmentSteps();
+  }
+
+  function resetDetachmentTimer(step) {
+    if (step.intervalId) {
+      clearInterval(step.intervalId);
+      step.intervalId = null;
+    }
+    step.status = 'idle';
+    if (step.type === 'timer') {
+      step.remaining = step.duration;
+    }
+    updateDetachmentProgressCount();
+    renderDetachmentSteps();
+  }
+
+  function completeDetachmentStep(step) {
+    if (step.intervalId) {
+      clearInterval(step.intervalId);
+      step.intervalId = null;
+    }
+    step.status = 'completed';
+    updateDetachmentProgressCount();
+    renderDetachmentSteps();
+
+    if (step.status === 'completed') {
+      const nextStep = detachmentState.steps.find(s => s.id === step.id + 1);
+      if (nextStep) {
+        setTimeout(() => {
+          const nextCard = detachmentStepList.querySelector(`.dyeing-step-card[data-step-id="${nextStep.id}"]`);
+          if (nextCard) {
+            nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }, 300);
+      }
+    }
+  }
+
+  // Event Delegation for detachment steps
+  if (detachmentStepList) {
+    detachmentStepList.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-step-action');
+      const presetBtn = e.target.closest('.btn-cell-preset');
+      const timerWrapper = e.target.closest('.step-timer-wrapper');
+      const gotoHemoBtn = e.target.closest('.btn-goto-hemo');
+
+      if (btn) {
+        const stepId = parseInt(btn.dataset.id);
+        const step = detachmentState.steps.find(s => s.id === stepId);
+        if (!step) return;
+
+        if (btn.classList.contains('btn-step-start')) {
+          startDetachmentTimer(step);
+        } else if (btn.classList.contains('btn-step-pause')) {
+          pauseDetachmentTimer(step);
+        } else if (btn.classList.contains('btn-step-reset')) {
+          resetDetachmentTimer(step);
+        } else if (btn.classList.contains('btn-step-done')) {
+          completeDetachmentStep(step);
+        } else if (btn.classList.contains('btn-add-minute')) {
+          if (step.intervalId) {
+            step.duration += 60;
+            step.remaining += 60;
+            step.targetTime += 60000;
+          } else {
+            if (step.status === 'completed') {
+              step.remaining = 60;
+              step.duration = 60;
+              step.status = 'idle';
+              updateDetachmentProgressCount();
+            } else {
+              step.duration += 60;
+              step.remaining += 60;
+            }
+          }
+          renderDetachmentSteps();
+        }
+      } else if (presetBtn) {
+        const preset = presetBtn.dataset.preset;
+        detachmentState.selectedPreset = preset;
+        
+        const step3 = detachmentState.steps.find(s => s.id === 3);
+        if (step3) {
+          if (step3.intervalId) {
+            clearInterval(step3.intervalId);
+            step3.intervalId = null;
+          }
+          step3.status = 'idle';
+          const presetDurations = {
+            'HEK': 300,
+            'HaCaT': 480,
+            'Caco-2': 300,
+            'MDCK': 300,
+            'NIH': 240
+          };
+          step3.duration = presetDurations[preset];
+          step3.remaining = step3.duration;
+        }
+        updateDetachmentProgressCount();
+        renderDetachmentSteps();
+      } else if (timerWrapper) {
+        const stepId = parseInt(timerWrapper.dataset.id);
+        const step = detachmentState.steps.find(s => s.id === stepId);
+        if (step && step.type === 'timer' && step.status !== 'running') {
+          openEditTimeModal(step);
+        }
+      } else if (gotoHemoBtn) {
+        switchPage('hemocytometer');
+      }
+    });
+  }
+
+  // Reset detachment protocol button
+  if (btnResetDetachmentProtocol) {
+    btnResetDetachmentProtocol.addEventListener('click', () => {
+      if (confirm('프로토콜 진행 상황을 초기화하시겠습니까?')) {
+        detachmentState.steps.forEach(step => {
+          if (step.intervalId) {
+            clearInterval(step.intervalId);
+            step.intervalId = null;
+          }
+          step.status = 'idle';
+          if (step.type === 'timer') {
+            if (step.id === 3) {
+              const presetDurations = {
+                'HEK': 300,
+                'HaCaT': 480,
+                'Caco-2': 300,
+                'MDCK': 300,
+                'NIH': 240
+              };
+              step.duration = presetDurations[detachmentState.selectedPreset] || 300;
+            } else {
+              step.duration = step.defaultDuration;
+            }
+            step.remaining = step.duration;
+          }
+        });
+        updateDetachmentProgressCount();
+        renderDetachmentSteps();
+      }
+    });
+  }
+
+  // ==========================================
   // 12. Initial Run
   // ==========================================
   calculateAndRender();
   updateNotificationBanner();
   updateProgressCount();
   renderDyeingSteps();
+  updateDetachmentProgressCount();
+  renderDetachmentSteps();
 });

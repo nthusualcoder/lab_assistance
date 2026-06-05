@@ -1475,3 +1475,72 @@ body {
 .btn-modal-secondary:active {
   background-color: var(--border-color);
 }
+
+/* ==========================================================================
+   15. Cell Detachment Timer Styles
+   ========================================================================== */
+.cell-preset-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  width: 100%;
+}
+
+.btn-cell-preset {
+  background-color: var(--bg-preset);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-cell-preset:active {
+  transform: scale(0.95);
+}
+
+.btn-cell-preset.active {
+  background-color: var(--bg-preset-active);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-add-minute {
+  background-color: #e8f3ff;
+  color: var(--color-primary);
+  border: 1px solid rgba(49, 130, 246, 0.2);
+}
+
+.dark-theme .btn-add-minute {
+  background-color: rgba(49, 130, 246, 0.15);
+  color: #5596f8;
+  border-color: rgba(49, 130, 246, 0.3);
+}
+
+.btn-goto-hemo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--color-primary), #00d084);
+  color: #ffffff;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 14px 0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.2);
+  margin-top: 10px;
+}
+
+.btn-goto-hemo:active {
+  transform: scale(0.97);
+  opacity: 0.95;
+}

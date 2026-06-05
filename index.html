@@ -110,15 +110,15 @@
 
       <!-- Timers Group -->
       <div id="group-timers" class="menu-list hidden">
-        <!-- Split Timer Card -->
+        <!-- Cell Detachment Timer Card -->
         <div class="menu-card" data-target="split-timer">
           <div class="menu-card-left">
             <div class="menu-icon-wrapper timer-split-bg">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menu-icon"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             </div>
             <div class="menu-card-info">
-              <span class="menu-card-title">스플릿 타이머 (Split Timer)</span>
-              <span class="menu-card-desc">세포 passage 및 다중 배양 시간 개별 관리</span>
+              <span class="menu-card-title">세포 떼어내기 타이머 (Cell Detachment)</span>
+              <span class="menu-card-desc">세포 detaching (HEK, HaCaT 등) 단계별 프로토콜 타이머</span>
             </div>
           </div>
           <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -432,23 +432,30 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- 4. SPLIT TIMER PAGE SECTION                   -->
+    <!-- 4. CELL DETACHMENT TIMER PAGE SECTION         -->
     <!-- ============================================== -->
     <section id="page-split-timer" class="app-page">
       <div class="header-nav">
         <button id="btn-back-home-split" class="btn-back" aria-label="홈으로 돌아가기">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="back-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         </button>
-        <h2 class="nav-title">스플릿 타이머</h2>
+        <h2 class="nav-title">세포 떼어내기 타이머</h2>
       </div>
 
       <div class="page-content">
-        <div class="card-toss text-center padding-xl">
-          <div class="placeholder-icon-wrapper timer-split-bg margin-bottom-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="placeholder-large-icon"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          </div>
-          <h3 class="placeholder-title">스플릿 타이머 준비 중</h3>
-          <p class="placeholder-desc">세포 passage 및 다중 배양 시간을 독립적으로 트래킹할 수 있는 타이머 기능이 곧 구현될 예정입니다.</p>
+        <!-- 1. Protocol Header Info -->
+        <div class="dyeing-header-control" style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; padding: 0 4px;">
+          <span class="detachment-progress-text" style="font-size: 0.85rem; font-weight: 600; color: var(--text-sub);">진행도: <strong id="detachment-progress-count" style="color: var(--color-primary);">0</strong> / 6 완료</span>
+          <button id="btn-reset-detachment-protocol" class="btn-toss-secondary" style="width: auto; padding: 6px 14px; border-radius: 10px; font-size: 0.8rem;">전체 초기화</button>
+        </div>
+
+        <div class="ratio-guide-text" style="text-align: left; margin: 4px 4px 8px; font-size: 0.78rem; font-weight: 600; color: var(--color-primary);">
+          💡 떼어내기 완료 후 Hemocytometer 계산기로 바로 이동할 수 있습니다.
+        </div>
+
+        <!-- 2. Step-by-step Protocol List -->
+        <div id="detachment-step-list" class="detachment-step-list" style="display: flex; flex-direction: column; gap: 14px; margin-top: 4px;">
+          <!-- Dynamic detachment cards rendered via app.js -->
         </div>
       </div>
     </section>
