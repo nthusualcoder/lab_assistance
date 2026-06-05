@@ -640,7 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         id: 9,
-        title: "9단계: 최종 PBS Washing (차광 ⚠️, 반복 🔄)",
+        title: "9단계: 최종 PBS Washing (차광, 반복)",
         desc: "PBS로 Washing 5분 반응 (3번 이상 수행)",
         type: "timer",
         defaultDuration: 300, // 5 mins
